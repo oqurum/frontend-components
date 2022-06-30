@@ -8,7 +8,7 @@ use yew::prelude::*;
 use crate::util::{does_parent_contain_class, does_parent_contain_attribute};
 
 
-// pub mod button;
+pub mod button;
 // pub mod edit_metadata;
 // pub mod search;
 // pub mod book_update_with_meta;
