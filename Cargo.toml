@@ -12,7 +12,12 @@ gloo-timers = { version = "0.2", features = ["futures"] }
 gloo-utils = "0.1"
 log = "0.4"
 wasm-bindgen = "0.2"
+wasm-bindgen-futures = "0.4"
 yew = "0.19"
 
 [dependencies.web-sys]
 version = "0.3"
+features = [
+	"DataTransfer",
+	"RequestInit",
+]
