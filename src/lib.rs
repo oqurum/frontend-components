@@ -5,3 +5,4 @@
 
 // TODO: Remove unwrap_throw / expect_throw methods.
 
+pub mod multi_select;
