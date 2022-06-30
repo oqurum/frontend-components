@@ -6,4 +6,7 @@
 // TODO: Remove unwrap_throw / expect_throw methods.
 
 pub mod multi_select;
+pub mod popup;
 pub mod upload;
+
+mod util;

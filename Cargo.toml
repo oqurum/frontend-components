@@ -19,5 +19,6 @@ yew = "0.19"
 version = "0.3"
 features = [
 	"DataTransfer",
+	"DomTokenList",
 	"RequestInit",
 ]
