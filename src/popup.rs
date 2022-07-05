@@ -8,10 +8,9 @@ use yew::prelude::*;
 use crate::util::{does_parent_contain_class, does_parent_contain_attribute};
 
 
+pub mod compare;
 pub mod button;
 pub mod search;
-// pub mod edit_metadata;
-// pub mod book_update_with_meta;
 
 pub static YEW_CLOSE_POPUP: &str = "yew_close_popup";
 
