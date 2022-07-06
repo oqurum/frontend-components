@@ -14,6 +14,9 @@ pub struct MultiSelectProperty<Ident: Clone + PartialEq + 'static> {
     pub children: ChildrenWithProps<MultiSelectItem<Ident>>,
 
     pub on_event: Option<Callback<MultiSelectEvent<Ident>>>,
+
+    #[prop_or_default]
+    pub editing: bool,
 }
 
 impl<Ident: Clone + PartialEq> PartialEq for MultiSelectProperty<Ident> {
@@ -144,6 +147,11 @@ impl<Ident: Clone + PartialEq + 'static> Component for MultiSelectModule<Ident> 
             }
 
             MultiSelectMessage::OnUnselectItem(id) => {
+                // Event is still active when not editing
+                if !ctx.props().editing {
+                    return false;
+                }
+
                 if let Some(mut item) = ctx.props().children.iter().find(|v| v.props.id == id) {
                     let mut props = Rc::make_mut(&mut item.props);
                     props.selected = false;
@@ -199,6 +207,28 @@ impl<Ident: Clone + PartialEq + 'static> Component for MultiSelectModule<Ident> 
     }
 
     fn view(&self, ctx: &Context<Self>) -> Html {
+        if ctx.props().editing {
+            self.display_editing(ctx)
+        } else {
+            self.display_viewing(ctx)
+        }
+    }
+}
+
+impl<Ident: Clone + PartialEq + 'static> MultiSelectModule<Ident> {
+    fn display_viewing(&self, ctx: &Context<Self>) -> Html {
+        html! {
+            <div class="multi-selection">
+                <div class="input">
+                    <div class="chosen-list">
+                        { for ctx.props().children.iter().filter(|v| v.props.selected).map(|child| Self::create_selected_pill(ctx, &child.props)) }
+                    </div>
+                </div>
+            </div>
+        }
+    }
+
+    fn display_editing(&self, ctx: &Context<Self>) -> Html {
         html! {
             <div class={ classes!("multi-selection", Some("focused").filter(|_| self.is_focused), Some("opened").filter(|_| self.is_opened)) }>
                 <div class="input" onclick={ ctx.link().callback(|_| MultiSelectMessage::SetFocus) }>
@@ -259,9 +289,9 @@ impl<Ident: Clone + PartialEq + 'static> Component for MultiSelectModule<Ident> 
             </div>
         }
     }
-}
 
-impl<Ident: Clone + PartialEq + 'static> MultiSelectModule<Ident> {
+
+
     fn create_button_value(&self) -> Option<String> {
         self.input_ref.cast::<HtmlInputElement>().map(|v| v.value().trim().to_string()).filter(|v| !v.is_empty())
     }
