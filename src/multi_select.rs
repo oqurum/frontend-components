@@ -162,10 +162,10 @@ impl<Ident: Clone + PartialEq + 'static> Component for MultiSelectModule<Ident> 
                         if let Some(cb) = ctx.props().on_event.as_ref() {
                             input.set_value("");
 
-                            cb.emit(MultiSelectEvent::Create {
+                            cb.emit(MultiSelectEvent::Create(MultiSelectNewItem {
                                 name,
                                 register: ctx.link().callback(MultiSelectMessage::OnSelectItem),
-                            });
+                            }));
                         }
                     }
                 }
@@ -330,10 +330,11 @@ impl<Ident: Clone + PartialEq + 'static> MultiSelectModule<Ident> {
 
 
 #[derive(Clone)]
-pub struct MultiselectNewItem {
+pub struct MultiSelectNewItem<Ident: Clone> {
     pub name: String,
+    #[must_use = "Register the Value with MultiSelect"]
     /// Registers the new item in the Multi Select Component
-    pub register: Callback<usize>,
+    pub register: Callback<Ident>,
 }
 
 
@@ -415,16 +416,11 @@ impl<Ident: Clone + PartialEq + 'static> Component for MultiSelectItem<Ident> {
 
 
 
-pub enum MultiSelectEvent<Ident> {
+pub enum MultiSelectEvent<Ident: Clone> {
     Toggle {
         toggle: bool,
         id: Ident
     },
 
-    Create {
-        name: String,
-        #[must_use = "Register the Value with MultiSelect"]
-        /// Registers the new item in the Multi Select Component
-        register: Callback<Ident>,
-    }
+    Create(MultiSelectNewItem<Ident>),
 }
