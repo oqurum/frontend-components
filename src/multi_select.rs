@@ -1,4 +1,4 @@
-use std::rc::Rc;
+use std::{rc::Rc, marker::PhantomData};
 
 use gloo_timers::future::TimeoutFuture;
 use wasm_bindgen::UnwrapThrowExt;
@@ -10,20 +10,20 @@ use yew::{prelude::*, virtual_dom::VChild, html::Scope};
 
 
 #[derive(Properties)]
-pub struct MultiSelectProperty {
-    pub children: ChildrenWithProps<MultiSelectItem>,
+pub struct MultiSelectProperty<Ident: Clone + PartialEq + 'static> {
+    pub children: ChildrenWithProps<MultiSelectItem<Ident>>,
 
-    pub on_event: Option<Callback<MultiSelectEvent>>,
+    pub on_event: Option<Callback<MultiSelectEvent<Ident>>>,
 }
 
-impl PartialEq for MultiSelectProperty {
+impl<Ident: Clone + PartialEq> PartialEq for MultiSelectProperty<Ident> {
     fn eq(&self, other: &Self) -> bool {
         self.children == other.children
     }
 }
 
 
-pub enum Msg {
+pub enum MultiSelectMessage<Ident: PartialEq> {
     Update,
     Ignore,
 
@@ -31,11 +31,11 @@ pub enum Msg {
     OnFocus,
     SetFocus,
 
-    OnSelectItem(usize),
-    OnUnselectItem(usize),
+    OnSelectItem(Ident),
+    OnUnselectItem(Ident),
     OnCreate,
 
-    OnHover(usize),
+    OnHover(Option<Ident>),
 
     OnKeyDown(KeyboardEvent),
     OnPressEnter,
@@ -43,7 +43,7 @@ pub enum Msg {
 }
 
 
-pub struct MultiselectModule {
+pub struct MultiSelectModule<Ident> {
     input_ref: NodeRef,
     // On focus
     is_focused: bool,
@@ -51,11 +51,13 @@ pub struct MultiselectModule {
     is_opened: bool,
 
     selected_index: usize,
+
+    _ident: PhantomData<Ident>,
 }
 
-impl Component for MultiselectModule {
-    type Message = Msg;
-    type Properties = MultiSelectProperty;
+impl<Ident: Clone + PartialEq + 'static> Component for MultiSelectModule<Ident> {
+    type Message = MultiSelectMessage<Ident>;
+    type Properties = MultiSelectProperty<Ident>;
 
     fn create(_ctx: &Context<Self>) -> Self {
         Self {
@@ -63,16 +65,18 @@ impl Component for MultiselectModule {
             is_focused: false,
             is_opened: false,
             selected_index: 0,
+
+            _ident: PhantomData,
         }
     }
 
     fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
         match msg {
-            Msg::Update => (),
-            Msg::Ignore => return false,
+            MultiSelectMessage::Update => (),
+            MultiSelectMessage::Ignore => return false,
 
-            Msg::OnHover(id) => {
-                if id != 0 {
+            MultiSelectMessage::OnHover(id_or_none) => {
+                if let Some(id) = id_or_none {
                     if let Some(index) = self.get_child_index_by_id(id, ctx) {
                         self.selected_index = index;
                     }
@@ -81,7 +85,7 @@ impl Component for MultiselectModule {
                 }
             }
 
-            Msg::OnInputChange(event) => {
+            MultiSelectMessage::OnInputChange(event) => {
                 let key = event.key();
 
                 if key != "ArrowUp" && key != "ArrowDown" {
@@ -89,19 +93,19 @@ impl Component for MultiselectModule {
                 }
             }
 
-            Msg::OnPressEnter => {
+            MultiSelectMessage::OnPressEnter => {
                 let child_count = self.viewable_children_count(ctx);
 
                 if self.selected_index < child_count {
                     let value = self.get_selected_child_id(ctx).expect_throw("Couldn't get child value");
 
-                    return self.update(ctx, Msg::OnSelectItem(value));
+                    return self.update(ctx, MultiSelectMessage::OnSelectItem(value));
                 } else {
-                    return self.update(ctx, Msg::OnCreate);
+                    return self.update(ctx, MultiSelectMessage::OnCreate);
                 }
             }
 
-            Msg::OnKeyDown(event) => {
+            MultiSelectMessage::OnKeyDown(event) => {
                 match event.key().as_str() {
                     "ArrowUp" => if self.selected_index != 0 {
                         self.selected_index -= 1;
@@ -128,29 +132,29 @@ impl Component for MultiselectModule {
                 }
             }
 
-            Msg::OnSelectItem(id) => {
+            MultiSelectMessage::OnSelectItem(id) => {
                 if let Some(mut item) = ctx.props().children.iter().find(|v| v.props.id == id) {
                     let mut props = Rc::make_mut(&mut item.props);
                     props.selected = true;
 
                     if let Some(cb) = ctx.props().on_event.as_ref() {
-                        cb.emit(MultiSelectEvent::Toggle { toggle: true, id: props.id });
+                        cb.emit(MultiSelectEvent::Toggle { toggle: true, id: props.id.clone() });
                     }
                 }
             }
 
-            Msg::OnUnselectItem(id) => {
+            MultiSelectMessage::OnUnselectItem(id) => {
                 if let Some(mut item) = ctx.props().children.iter().find(|v| v.props.id == id) {
                     let mut props = Rc::make_mut(&mut item.props);
                     props.selected = false;
 
                     if let Some(cb) = ctx.props().on_event.as_ref() {
-                        cb.emit(MultiSelectEvent::Toggle { toggle: false, id: props.id });
+                        cb.emit(MultiSelectEvent::Toggle { toggle: false, id: props.id.clone() });
                     }
                 }
             }
 
-            Msg::OnCreate => {
+            MultiSelectMessage::OnCreate => {
                 if let Some(input) = self.input_ref.cast::<HtmlInputElement>() {
                     let name = input.value().trim().to_string();
 
@@ -160,7 +164,7 @@ impl Component for MultiselectModule {
 
                             cb.emit(MultiSelectEvent::Create {
                                 name,
-                                register: ctx.link().callback(Msg::OnSelectItem),
+                                register: ctx.link().callback(MultiSelectMessage::OnSelectItem),
                             });
                         }
                     }
@@ -170,17 +174,17 @@ impl Component for MultiselectModule {
 
             // Focus
 
-            Msg::SetFocus => {
+            MultiSelectMessage::SetFocus => {
                 if let Some(input) = self.input_ref.cast::<HtmlInputElement>() {
                     let _ = input.focus();
                 }
             }
 
-            Msg::OnFocus => {
+            MultiSelectMessage::OnFocus => {
                 self.is_focused = true;
             }
 
-            Msg::OnUnfocus => {
+            MultiSelectMessage::OnUnfocus => {
                 self.is_focused = false;
                 self.selected_index = 0;
             }
@@ -197,20 +201,20 @@ impl Component for MultiselectModule {
     fn view(&self, ctx: &Context<Self>) -> Html {
         html! {
             <div class={ classes!("multi-selection", Some("focused").filter(|_| self.is_focused), Some("opened").filter(|_| self.is_opened)) }>
-                <div class="input" onclick={ ctx.link().callback(|_| Msg::SetFocus) }>
+                <div class="input" onclick={ ctx.link().callback(|_| MultiSelectMessage::SetFocus) }>
                     <div class="chosen-list">
                         { for ctx.props().children.iter().filter(|v| v.props.selected).map(|child| Self::create_selected_pill(ctx, &child.props)) }
                     </div>
                     <input
                         ref={ self.input_ref.clone() }
-                        onfocusin={ ctx.link().callback(|_| Msg::OnFocus) }
+                        onfocusin={ ctx.link().callback(|_| MultiSelectMessage::OnFocus) }
                         onfocusout={ ctx.link().callback_future(|_| async {
                             // TODO: Fix. Used since we unfocus when we click the dropdown. This provides enough time for the onmousedown event to fire.
                             TimeoutFuture::new(100).await;
-                            Msg::OnUnfocus
+                            MultiSelectMessage::OnUnfocus
                         }) }
-                        onkeyup={ ctx.link().callback(|e: KeyboardEvent| if e.key() == "Enter" { Msg::OnPressEnter } else { Msg::OnInputChange(e) }) }
-                        onkeydown={ ctx.link().callback(Msg::OnKeyDown) }
+                        onkeyup={ ctx.link().callback(|e: KeyboardEvent| if e.key() == "Enter" { MultiSelectMessage::OnPressEnter } else { MultiSelectMessage::OnInputChange(e) }) }
+                        onkeydown={ ctx.link().callback(MultiSelectMessage::OnKeyDown) }
                         type="text"
                         placeholder="Enter Something"
                     />
@@ -240,8 +244,8 @@ impl Component for MultiselectModule {
                                 html! {
                                     <div
                                         class={ classes!("list-item", Some("hovering").filter(|_| children_count == self.selected_index)) }
-                                        onclick={ ctx.link().callback(|_| Msg::OnCreate) }
-                                        onmouseover={ ctx.link().callback(|_| Msg::OnHover(0)) }
+                                        onclick={ ctx.link().callback(|_| MultiSelectMessage::OnCreate) }
+                                        onmouseover={ ctx.link().callback(|_| MultiSelectMessage::OnHover(None)) }
                                     >
                                         { format!(r#"Create "{value}""#) }
                                     </div>
@@ -257,22 +261,22 @@ impl Component for MultiselectModule {
     }
 }
 
-impl MultiselectModule {
+impl<Ident: Clone + PartialEq + 'static> MultiSelectModule<Ident> {
     fn create_button_value(&self) -> Option<String> {
         self.input_ref.cast::<HtmlInputElement>().map(|v| v.value().trim().to_string()).filter(|v| !v.is_empty())
     }
 
-    fn create_selected_pill(ctx: &Context<Self>, props: &Rc<MultiSelectItemProps>) -> Html {
-        let item_id = props.id;
+    fn create_selected_pill(ctx: &Context<Self>, props: &Rc<MultiSelectItemProps<Ident>>) -> Html {
+        let item_id = props.id.clone();
 
         html! {
-            <div class="chosen-item" onmousedown={ctx.link().callback(move |_| Msg::OnUnselectItem(item_id))}>
+            <div class="chosen-item" onmousedown={ctx.link().callback(move |_| MultiSelectMessage::OnUnselectItem(item_id.clone()))}>
                 { &props.name }
             </div>
         }
     }
 
-    fn filter_viewable_child(&self, item: &VChild<MultiSelectItem>) -> bool {
+    fn filter_viewable_child(&self, item: &VChild<MultiSelectItem<Ident>>) -> bool {
         let input_val_lc = self.input_ref.cast::<HtmlInputElement>().map(|v| v.value().to_lowercase());
 
         if let Some(v) = input_val_lc.as_deref() {
@@ -292,7 +296,7 @@ impl MultiselectModule {
             .count()
     }
 
-    fn get_selected_child_id(&self, ctx: &Context<Self>) -> Option<usize> {
+    fn get_selected_child_id(&self, ctx: &Context<Self>) -> Option<Ident> {
         ctx.props()
             .children
             .iter()
@@ -300,14 +304,14 @@ impl MultiselectModule {
             .enumerate()
             .find_map(|(index, item)| {
                 if index == self.selected_index {
-                    Some(item.props.id)
+                    Some(item.props.id.clone())
                 } else {
                     None
                 }
             })
     }
 
-    fn get_child_index_by_id(&self, id: usize, ctx: &Context<Self>) -> Option<usize> {
+    fn get_child_index_by_id(&self, id: Ident, ctx: &Context<Self>) -> Option<usize> {
         ctx.props()
             .children
             .iter()
@@ -337,11 +341,11 @@ pub struct MultiselectNewItem {
 
 
 #[derive(Clone, Properties)]
-pub struct MultiSelectItemProps {
-    pub id: usize,
+pub struct MultiSelectItemProps<Ident: Clone + PartialEq + 'static> {
+    pub id: Ident,
     pub name: String,
 
-    pub callback: Option<Scope<MultiselectModule>>,
+    pub callback: Option<Scope<MultiSelectModule<Ident>>>,
 
     #[prop_or_default]
     pub selected: bool,
@@ -350,7 +354,7 @@ pub struct MultiSelectItemProps {
     hovering: bool, // TODO: Better name
 }
 
-impl PartialEq for MultiSelectItemProps {
+impl<Ident: Clone + PartialEq> PartialEq for MultiSelectItemProps<Ident> {
     fn eq(&self, other: &Self) -> bool {
         self.id == other.id &&
         self.name == other.name &&
@@ -367,21 +371,25 @@ pub enum MultiSelectItemMessage {
 
 
 
-pub struct MultiSelectItem;
+pub struct MultiSelectItem<Ident: PartialEq> {
+    _ident: PhantomData<Ident>,
+}
 
-impl Component for MultiSelectItem {
+impl<Ident: Clone + PartialEq + 'static> Component for MultiSelectItem<Ident> {
     type Message = MultiSelectItemMessage;
-    type Properties = MultiSelectItemProps;
+    type Properties = MultiSelectItemProps<Ident>;
 
     fn create(_ctx: &Context<Self>) -> Self {
-        Self
+        Self {
+            _ident: PhantomData,
+        }
     }
 
     fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
         match msg {
             MultiSelectItemMessage::Selected => {
                 let props = ctx.props();
-                props.callback.as_ref().unwrap_throw().send_message(Msg::OnSelectItem(props.id));
+                props.callback.as_ref().unwrap_throw().send_message(MultiSelectMessage::OnSelectItem(props.id.clone()));
             }
         }
 
@@ -390,13 +398,13 @@ impl Component for MultiSelectItem {
 
     fn view(&self, ctx: &Context<Self>) -> Html {
         let cb = ctx.props().callback.clone().unwrap_throw();
-        let id = ctx.props().id;
+        let id = ctx.props().id.clone();
 
         html! {
             <div
                 class={ classes!("list-item", Some("hovering").filter(|_| ctx.props().hovering)) }
                 onclick={ ctx.link().callback(|_| MultiSelectItemMessage::Selected) }
-                onmouseover={ move |_| cb.send_message(Msg::OnHover(id)) }
+                onmouseover={ move |_| cb.send_message(MultiSelectMessage::OnHover(Some(id.clone()))) }
             >
                 { &ctx.props().name }
             </div>
@@ -407,16 +415,16 @@ impl Component for MultiSelectItem {
 
 
 
-pub enum MultiSelectEvent {
+pub enum MultiSelectEvent<Ident> {
     Toggle {
         toggle: bool,
-        id: usize
+        id: Ident
     },
 
     Create {
         name: String,
         #[must_use = "Register the Value with MultiSelect"]
         /// Registers the new item in the Multi Select Component
-        register: Callback<usize>,
+        register: Callback<Ident>,
     }
 }
