@@ -6,8 +6,6 @@ use web_sys::HtmlInputElement;
 use yew::{prelude::*, virtual_dom::VChild, html::Scope};
 
 
-// TODO: Edit and View Mode
-
 
 #[derive(Properties)]
 pub struct MultiSelectProperty<Ident: Clone + PartialEq + 'static> {
@@ -118,11 +116,7 @@ impl<Ident: Clone + PartialEq + 'static> Component for MultiSelectModule<Ident> 
                         let child_count = self.viewable_children_count(ctx);
 
                         // Correct child count for if statement. If we're not displaying create value, minus one from child count.
-                        let child_count = if self.create_button_value().is_some() {
-                            child_count
-                        } else { // TODO: Remove this if statement. It complicates it.
-                            child_count.saturating_sub(1)
-                        };
+                        let child_count = self.create_button_value().map(|_| child_count).unwrap_or_else(|| child_count.saturating_sub(1));
 
                         if child_count > self.selected_index {
                             self.selected_index += 1;
