@@ -12,7 +12,7 @@ use crate::ImageType;
 macro_rules! create_single_id {
     ($name:ident) => {
         #[repr(transparent)]
-        #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+        #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
         pub struct $name(usize);
 
         impl $name {
