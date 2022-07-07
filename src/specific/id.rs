@@ -8,6 +8,7 @@ use serde::{Serialize, Deserialize, Deserializer, Serializer};
 use crate::ImageType;
 
 
+#[macro_export]
 macro_rules! create_single_id {
     ($name:ident) => {
         #[repr(transparent)]
