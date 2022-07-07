@@ -1,5 +1,3 @@
-use web_sys::{Element, Event};
-
 
 /// Truncate string based off of char indices instead of bytes.
 pub fn truncate_on_indices(s: &mut String, max_chars: usize) {
@@ -24,29 +22,37 @@ pub fn upper_case_first_char(mut value: String) -> String {
 
 
 
-pub fn does_parent_contain_class(element: &Element, value: &str) -> bool {
-    if element.class_list().contains(value) {
-        true
-    } else if let Some(element) = element.parent_element() {
-        does_parent_contain_class(&element, value)
-    } else {
-        false
-    }
-}
-
-pub fn does_parent_contain_attribute(element: &Element, value: &str) -> bool {
-    if element.has_attribute(value) {
-        true
-    } else if let Some(element) = element.parent_element() {
-        does_parent_contain_attribute(&element, value)
-    } else {
-        false
-    }
-}
-
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub enum LoadingItem<V> {
     Loading,
     Loaded(V)
+}
+
+
+#[cfg(feature = "frontend")]
+pub use frontend::*;
+
+#[cfg(feature = "frontend")]
+mod frontend {
+    use web_sys::{Element, Event};
+
+    pub fn does_parent_contain_class(element: &Element, value: &str) -> bool {
+        if element.class_list().contains(value) {
+            true
+        } else if let Some(element) = element.parent_element() {
+            does_parent_contain_class(&element, value)
+        } else {
+            false
+        }
+    }
+
+    pub fn does_parent_contain_attribute(element: &Element, value: &str) -> bool {
+        if element.has_attribute(value) {
+            true
+        } else if let Some(element) = element.parent_element() {
+            does_parent_contain_attribute(&element, value)
+        } else {
+            false
+        }
+    }
 }
