@@ -1,6 +1,6 @@
-# Frontend Components
+# Common Library
 
-These are used for both the Self-Hosted Client Frontend and the Global Server Frontend
+This crate is used for the frontend, backend, and all around.
 
 ## Lots to do:
  - Consolidate SCSS File here.
