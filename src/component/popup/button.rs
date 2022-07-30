@@ -59,7 +59,7 @@ impl Component for ButtonWithPopup {
 
     fn view(&self, ctx: &Context<Self>) -> Html {
         html! {
-            <div class={ classes!("button-popup-group", self.class.clone()) }>
+            <div class={ classes!("button-popup-group", ctx.props().class.clone()) }>
                 <span
                     class="button material-icons"
                     title="More Options"
