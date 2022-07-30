@@ -1,0 +1,52 @@
+.popup-comparison-edit {
+	width: 58%;
+
+	.body {
+		overflow-y: auto;
+	}
+
+	.content {
+		display: flex;
+		flex-direction: column;
+		flex-grow: 1;
+	}
+
+
+	.comparison-row > .row-grow {
+		cursor: pointer;
+		border-radius: var(--radius-2);
+
+		&.selected > .label {
+			border-left: 2px var(--brand) solid;
+			border-right: 2px var(--brand) solid;
+		}
+	}
+}
+
+
+.comparison-row {
+	display: flex;
+	margin-bottom: 0.5em;
+
+	> .row-title {
+		width: 12%;
+		font-weight: bold;
+		text-align: right;
+		align-self: center;
+		flex-shrink: 0;
+	}
+
+	> .row-shrink {
+		flex-shrink: 1;
+		padding: 4px;
+	}
+
+	> .row-grow {
+		flex-grow: 1;
+		padding: 4px;
+		min-width: 44%;
+		max-width: 44%;
+	}
+}
+
+
