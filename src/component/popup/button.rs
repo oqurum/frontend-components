@@ -59,7 +59,7 @@ impl Component for ButtonWithPopup {
 
     fn view(&self, ctx: &Context<Self>) -> Html {
         html! {
-            <div class="button-popup-group">
+            <div class={ classes!("button-popup-group", self.class.clone()) }>
                 <span
                     class="button material-icons"
                     title="More Options"
@@ -72,7 +72,7 @@ impl Component for ButtonWithPopup {
                             <Popup
                                 type_of={ PopupType::Display }
                                 on_close={ ctx.link().callback(|_| ButtonMsg::ClosePopup) }
-                                classes={ classes!("menu-list") }
+                                classes="menu-list"
                             >
                                 { for ctx.props().children.iter() }
                             </Popup>
