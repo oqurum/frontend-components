@@ -141,12 +141,14 @@ pub struct PopupCloseProps {
     pub class: Classes,
 
     pub children: Children,
+
+    pub onclick: Option<Callback<MouseEvent>>,
 }
 
 #[function_component(PopupClose)]
 pub fn _close(props: &PopupCloseProps) -> Html {
     html! {
-        <div class={ props.class.clone() } { YEW_CLOSE_POPUP }>
+        <div class={ props.class.clone() } { YEW_CLOSE_POPUP } onclick={ props.onclick.clone() }>
             { for props.children.iter() }
         </div>
     }
