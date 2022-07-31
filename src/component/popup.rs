@@ -12,7 +12,7 @@ pub mod compare;
 pub mod button;
 pub mod search;
 
-pub static YEW_CLOSE_POPUP: &str = "yew_close_popup";
+static YEW_CLOSE_POPUP: &str = "yew_close_popup";
 
 #[derive(Clone, Copy, PartialEq)]
 pub enum PopupType {
@@ -131,5 +131,23 @@ impl Component for Popup {
         if let Some(func) = self.closure.take() {
             let _ = body().remove_event_listener_with_callback("click", func.as_ref().unchecked_ref());
         }
+    }
+}
+
+
+#[derive(PartialEq, Properties)]
+pub struct PopupCloseProps {
+    #[prop_or_default]
+    pub class: Classes,
+
+    pub children: Children,
+}
+
+#[function_component(PopupClose)]
+pub fn _close(props: &PopupCloseProps) -> Html {
+    html! {
+        <div class={ props.class.clone() } { YEW_CLOSE_POPUP }>
+            { for props.children.iter() }
+        </div>
     }
 }
