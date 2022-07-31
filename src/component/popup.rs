@@ -137,10 +137,11 @@ impl Component for Popup {
 
 #[derive(PartialEq, Properties)]
 pub struct PopupCloseProps {
+    pub children: Children,
+
     #[prop_or_default]
     pub class: Classes,
-
-    pub children: Children,
+    pub title: Option<String>,
 
     pub onclick: Option<Callback<MouseEvent>>,
 }
@@ -148,7 +149,12 @@ pub struct PopupCloseProps {
 #[function_component(PopupClose)]
 pub fn _close(props: &PopupCloseProps) -> Html {
     html! {
-        <div class={ props.class.clone() } { YEW_CLOSE_POPUP } onclick={ props.onclick.clone() }>
+        <div
+            title={ props.title.clone() }
+            class={ props.class.clone() }
+            { YEW_CLOSE_POPUP }
+            onclick={ props.onclick.clone() }
+        >
             { for props.children.iter() }
         </div>
     }
