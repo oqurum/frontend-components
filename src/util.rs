@@ -34,7 +34,7 @@ pub use frontend::*;
 
 #[cfg(feature = "frontend")]
 mod frontend {
-    use web_sys::{Element, Event};
+    use web_sys::Element;
 
     pub fn does_parent_contain_class(element: &Element, value: &str) -> bool {
         if element.class_list().contains(value) {
