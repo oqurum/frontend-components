@@ -1,9 +1,5 @@
 use serde::{Serialize, Deserialize};
 
-#[cfg(feature = "backend")]
-pub type JsonResponse<V> = actix_web::web::Json<WrappingResponse<V>>;
-
-
 // List Response
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct QueryListResponse<V> {
