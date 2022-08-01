@@ -8,6 +8,7 @@
 #[cfg(feature = "frontend")]
 pub mod component;
 
+pub mod api;
 pub mod util;
 pub mod specific;
 pub mod error;
