@@ -12,7 +12,7 @@ publish = false
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [features]
-default = ["frontend"]
+default = []
 frontend = ["gloo-file", "gloo-timers", "gloo-utils", "wasm-bindgen", "wasm-bindgen-futures", "web-sys", "yew"]
 backend = ["rusqlite"]
 
