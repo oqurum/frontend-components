@@ -1,4 +1,13 @@
 
+.label-group {
+	display: flex;
+
+	> * {
+		margin: 0 2px;
+	}
+}
+
+
 .label {
 	padding: 3px;
 	border-radius: var(--radius-2);
