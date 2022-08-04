@@ -1,3 +1,8 @@
+[workspace]
+members = [
+    "examples/webpage",
+]
+
 [package]
 name = "common"
 version = "0.1.0"
@@ -7,7 +12,7 @@ publish = false
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [features]
-default = []
+default = ["frontend"]
 frontend = ["gloo-file", "gloo-timers", "gloo-utils", "wasm-bindgen", "wasm-bindgen-futures", "web-sys", "yew"]
 backend = ["rusqlite"]
 
@@ -19,6 +24,7 @@ thiserror = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 serde_urlencoded = "0.7"
+validator = { version = "0.15", features = ["derive"] }
 
 
 # Backend
