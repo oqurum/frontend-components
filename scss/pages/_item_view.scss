@@ -27,6 +27,13 @@
 				> .description {
 					max-inline-size: var(--text-size-content-4);
 					white-space: pre-wrap;
+
+					// Max 6 lines
+					display: -webkit-box;
+					-webkit-line-clamp: 6;
+					-webkit-box-orient: vertical;
+					overflow: hidden;
+					text-overflow: ellipsis;
 				}
 
 				// Editing
