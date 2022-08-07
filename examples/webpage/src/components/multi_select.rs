@@ -51,7 +51,18 @@ pub fn _multi_select() -> Html {
             <h3>{ "Editing Multi Select" }</h3>
             <br />
 
-            <MultiSelectModule<usize> editing=true {on_event}>
+            <MultiSelectModule<usize> editing=true on_event={on_event.clone()}>
+            {
+                for items.iter().map(|&(id, name)| html_nested! {
+                    <MultiSelectItem<usize> {id} {name} selected={ selected_hook.current().iter().any(move |v| *v == id) } />
+                })
+            }
+            </MultiSelectModule<usize>>
+
+            <h3>{ "Cannot Create Multi Select" }</h3>
+            <br />
+
+            <MultiSelectModule<usize> editing=true create_new=false {on_event}>
             {
                 for items.iter().map(|&(id, name)| html_nested! {
                     <MultiSelectItem<usize> {id} {name} selected={ selected_hook.current().iter().any(move |v| *v == id) } />

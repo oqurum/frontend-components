@@ -15,11 +15,16 @@ pub struct MultiSelectProperty<Ident: Clone + PartialEq + 'static> {
 
     #[prop_or_default]
     pub editing: bool,
+
+    #[prop_or(true)]
+    pub create_new: bool,
 }
 
 impl<Ident: Clone + PartialEq> PartialEq for MultiSelectProperty<Ident> {
     fn eq(&self, other: &Self) -> bool {
-        self.children == other.children
+        self.children == other.children &&
+        self.editing == other.editing &&
+        self.create_new == other.create_new
     }
 }
 
@@ -126,7 +131,7 @@ impl<Ident: Clone + PartialEq + 'static> Component for MultiSelectModule<Ident> 
                         let child_count = self.viewable_children_count(ctx);
 
                         // Correct child count for if statement. If we're not displaying create value, minus one from child count.
-                        let child_count = self.create_button_value().map(|_| child_count).unwrap_or_else(|| child_count.saturating_sub(1));
+                        let child_count = self.create_button_value(ctx).map(|_| child_count).unwrap_or_else(|| child_count.saturating_sub(1));
 
                         if child_count > self.selected_index {
                             self.selected_index += 1;
@@ -280,7 +285,7 @@ impl<Ident: Clone + PartialEq + 'static> MultiSelectModule<Ident> {
                         }
 
                         {
-                            if let Some(value) = self.create_button_value() {
+                            if let Some(value) = self.create_button_value(ctx) {
                                 let children_count = self.viewable_children_count(ctx);
 
                                 html! {
@@ -304,8 +309,12 @@ impl<Ident: Clone + PartialEq + 'static> MultiSelectModule<Ident> {
 
 
 
-    fn create_button_value(&self) -> Option<String> {
-        self.input_ref.cast::<HtmlInputElement>().map(|v| v.value().trim().to_string()).filter(|v| !v.is_empty())
+    fn create_button_value(&self, ctx: &Context<Self>) -> Option<String> {
+        if ctx.props().create_new {
+            self.input_ref.cast::<HtmlInputElement>().map(|v| v.value().trim().to_string()).filter(|v| !v.is_empty())
+        } else {
+            None
+        }
     }
 
     fn create_selected_pill(ctx: &Context<Self>, props: &Rc<MultiSelectItemProps<Ident>>) -> Html {
