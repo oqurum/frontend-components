@@ -39,6 +39,7 @@ pub enum MultiSelectMessage<Ident: PartialEq> {
     OnHover(Option<Ident>),
 
     OnKeyDown(KeyboardEvent),
+    OnKeyUp(KeyboardEvent),
     OnPressEnter,
     OnInputChange(KeyboardEvent),
 }
@@ -92,6 +93,15 @@ impl<Ident: Clone + PartialEq + 'static> Component for MultiSelectModule<Ident> 
                 if key != "ArrowUp" && key != "ArrowDown" {
                     self.selected_index = 0;
                 }
+
+                // TODO: Check if we didn't press any special characters
+                if let Some(input) = self.input_ref.cast::<HtmlInputElement>() {
+                    let text = input.value().trim().to_string();
+
+                    if let Some(cb) = ctx.props().on_event.as_ref() {
+                        cb.emit(MultiSelectEvent::Input { text });
+                    }
+                }
             }
 
             MultiSelectMessage::OnPressEnter => {
@@ -126,6 +136,14 @@ impl<Ident: Clone + PartialEq + 'static> Component for MultiSelectModule<Ident> 
                     },
 
                     _ => ()
+                }
+            }
+
+            MultiSelectMessage::OnKeyUp(event) => {
+                if event.key() == "Enter" {
+                    return self.update(ctx, MultiSelectMessage::OnPressEnter);
+                } else {
+                    return self.update(ctx, MultiSelectMessage::OnInputChange(event));
                 }
             }
 
@@ -237,7 +255,7 @@ impl<Ident: Clone + PartialEq + 'static> MultiSelectModule<Ident> {
                             TimeoutFuture::new(100).await;
                             MultiSelectMessage::OnUnfocus
                         }) }
-                        onkeyup={ ctx.link().callback(|e: KeyboardEvent| if e.key() == "Enter" { MultiSelectMessage::OnPressEnter } else { MultiSelectMessage::OnInputChange(e) }) }
+                        onkeyup={ ctx.link().callback(MultiSelectMessage::OnKeyUp) }
                         onkeydown={ ctx.link().callback(MultiSelectMessage::OnKeyDown) }
                         type="text"
                         placeholder="Enter Something"
@@ -447,4 +465,8 @@ pub enum MultiSelectEvent<Ident: Clone> {
     },
 
     Create(MultiSelectNewItem<Ident>),
+
+    Input {
+        text: String,
+    }
 }

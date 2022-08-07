@@ -28,7 +28,8 @@ pub fn _multi_select() -> Html {
             }
         }
 
-        MultiSelectEvent::Create(_new_item) => ()
+        MultiSelectEvent::Create(_) |
+        MultiSelectEvent::Input { .. } => (),
     });
 
     html! {
