@@ -12,5 +12,9 @@
 		&.library {
 			font-size: var(--font-size-3);
 		}
+
+		&.active {
+			color: var(--brand);
+		}
 	}
 }
