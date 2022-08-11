@@ -32,6 +32,7 @@
 .popup-at-point {
 	position: absolute;
 	z-index: 50;
+	min-width: max-content;
 }
 
 
