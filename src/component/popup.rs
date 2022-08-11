@@ -68,33 +68,35 @@ impl Component for Popup {
         }
     }
 
-    fn update(&mut self, _ctx: &Context<Self>, _msg: Self::Message) -> bool {
-        false
-    }
-
     fn view(&self, ctx: &Context<Self>) -> Html {
         match ctx.props().type_of {
-            PopupType::FullOverlay => html! {
-                <div ref={self.node_ref.clone()} class="popup">
-                    <div class={classes!("popup-container", ctx.props().classes.clone())}>
-                        { for ctx.props().children.iter() }
+            PopupType::FullOverlay => {
+                let display = html! {
+                    <div ref={ self.node_ref.clone() } class="popup">
+                        <div class={ classes!("popup-container", ctx.props().classes.clone()) }>
+                            { for ctx.props().children.iter() }
+                        </div>
                     </div>
-                </div>
+                };
+
+                create_portal(display, body().into())
             },
 
             PopupType::AtPoint(pos_x, pos_y) => {
                 let styling = format!("left: {}px; top: {}px;", pos_x, pos_y);
 
-                html! {
-                    <div ref={self.node_ref.clone()} class={classes!("popup-at-point", ctx.props().classes.clone())} style={ styling }>
+                let display = html! {
+                    <div ref={ self.node_ref.clone() } class={ classes!("popup-at-point", ctx.props().classes.clone()) } style={ styling }>
                         { for ctx.props().children.iter() }
                     </div>
-                }
+                };
+
+                create_portal(display, body().into())
             },
 
             PopupType::Display => {
                 html! {
-                    <div ref={self.node_ref.clone()} class={classes!("popup-display", ctx.props().classes.clone())}>
+                    <div ref={ self.node_ref.clone() } class={ classes!("popup-display", ctx.props().classes.clone()) }>
                         { for ctx.props().children.iter() }
                     </div>
                 }
@@ -133,7 +135,6 @@ impl Component for Popup {
         }
     }
 }
-
 
 #[derive(PartialEq, Properties)]
 pub struct PopupCloseProps {
