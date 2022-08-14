@@ -230,6 +230,16 @@ impl<Ident: Clone + PartialEq + 'static> Component for MultiSelectModule<Ident> 
             self.display_viewing(ctx)
         }
     }
+
+    fn changed(&mut self, _ctx: &Context<Self>) -> bool {
+        if self.is_focused {
+            if let Some(input) = self.input_ref.cast::<HtmlInputElement>() {
+                let _ = input.focus();
+            }
+        }
+
+        true
+    }
 }
 
 impl<Ident: Clone + PartialEq + 'static> MultiSelectModule<Ident> {
