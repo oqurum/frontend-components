@@ -1,5 +1,7 @@
 use serde::{Serialize, Deserialize};
 
+use super::librarian::Scope;
+
 
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -14,5 +16,5 @@ pub struct VerifyAgentQuery {
     /// Unqiue ID for continuity
     pub state: String,
     /// What we were doing (server_register, member_link)
-    pub scope: String,
+    pub scope: Scope,
 }
