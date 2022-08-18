@@ -1,5 +1,9 @@
 use serde::{Serialize, Deserialize};
 
+
+pub mod librarian;
+
+
 // List Response
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct QueryListResponse<V> {
