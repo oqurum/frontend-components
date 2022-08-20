@@ -2,7 +2,6 @@ use yew::prelude::*;
 
 use super::{Popup, PopupType};
 
-
 // TODO: Implement.
 // #[derive(Clone, Copy)]
 // pub enum ButtonPopupPosition {
@@ -12,8 +11,6 @@ use super::{Popup, PopupType};
 //     Right,
 // }
 
-
-
 #[derive(Properties, PartialEq)]
 pub struct ButtonProperty {
     #[prop_or_default]
@@ -22,12 +19,10 @@ pub struct ButtonProperty {
     pub children: Children,
 }
 
-
 pub enum ButtonMsg {
     TogglePopup,
     ClosePopup,
 }
-
 
 pub struct ButtonWithPopup {
     is_open: bool,
@@ -38,9 +33,7 @@ impl Component for ButtonWithPopup {
     type Properties = ButtonProperty;
 
     fn create(_ctx: &Context<Self>) -> Self {
-        Self {
-            is_open: false,
-        }
+        Self { is_open: false }
     }
 
     fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {

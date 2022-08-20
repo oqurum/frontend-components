@@ -22,7 +22,6 @@ pub struct Property {
     pub show_equal_rows: bool,
 }
 
-
 pub enum Msg {
     Ignore,
 
@@ -31,7 +30,6 @@ pub enum Msg {
 
     SetNewSelected(FieldName, SelectedSide),
 }
-
 
 pub struct PopupComparison {
     selected: HashMap<FieldName, SelectedSide>,
@@ -43,12 +41,24 @@ impl Component for PopupComparison {
 
     fn create(ctx: &Context<Self>) -> Self {
         Self {
-            selected: ctx.props().compare.get_field_names().into_iter().map(|v| (v, SelectedSide::Left)).collect(),
+            selected: ctx
+                .props()
+                .compare
+                .get_field_names()
+                .into_iter()
+                .map(|v| (v, SelectedSide::Left))
+                .collect(),
         }
     }
 
     fn changed(&mut self, ctx: &Context<Self>) -> bool {
-        self.selected = ctx.props().compare.get_field_names().into_iter().map(|v| (v, SelectedSide::Left)).collect();
+        self.selected = ctx
+            .props()
+            .compare
+            .get_field_names()
+            .into_iter()
+            .map(|v| (v, SelectedSide::Left))
+            .collect();
 
         true
     }
@@ -70,7 +80,7 @@ impl Component for PopupComparison {
                 }
 
                 ctx.props().on_submit.emit(map);
-            },
+            }
 
             Msg::SetNewSelected(field, side) => {
                 self.selected.insert(field, side);
@@ -150,7 +160,9 @@ impl PopupComparison {
         let new_selected = side_selected.is_right().then(|| "selected");
 
         match (left_value, right_value) {
-            (Some(left_value), Some(right_value)) if left_value != right_value || ctx.props().show_equal_rows => {
+            (Some(left_value), Some(right_value))
+                if left_value != right_value || ctx.props().show_equal_rows =>
+            {
                 html! {
                     <div class="comparison-row">
                         <div class="row-title"><span>{ title }</span></div>
@@ -206,7 +218,9 @@ impl PopupComparison {
         let new_selected = side_selected.is_right().then(|| "selected");
 
         match (left_value, right_value) {
-            (Some(left_value), Some(right_value)) if left_value != right_value || ctx.props().show_equal_rows => {
+            (Some(left_value), Some(right_value))
+                if left_value != right_value || ctx.props().show_equal_rows =>
+            {
                 html! {
                     <div class="comparison-row">
                         <div class="row-title"><span>{ title }</span></div>
@@ -269,9 +283,7 @@ impl PopupComparison {
     }
 }
 
-
 pub type MapContainer = HashMap<FieldName, MapValue>;
-
 
 #[derive(Debug, PartialEq)]
 pub struct CompareContainer {
@@ -282,24 +294,25 @@ impl CompareContainer {
     pub fn create(
         displays: Vec<(FieldName, &'static str, CompareDisplay)>,
         mut left: MapContainer,
-        mut right: MapContainer
+        mut right: MapContainer,
     ) -> Self {
         let mut compiled = HashMap::new();
 
         for (field_name, title, display) in displays {
-            compiled.insert(field_name, CompareRow {
-                display,
+            compiled.insert(
+                field_name,
+                CompareRow {
+                    display,
 
-                title,
+                    title,
 
-                left: left.remove(field_name),
-                right: right.remove(field_name),
-            });
+                    left: left.remove(field_name),
+                    right: right.remove(field_name),
+                },
+            );
         }
 
-        Self {
-            fields: compiled
-        }
+        Self { fields: compiled }
     }
 
     pub fn get_side_value_map(&self, side: SelectedSide) -> HashMap<FieldName, serde_json::Value> {
@@ -315,7 +328,11 @@ impl CompareContainer {
     }
 
     #[inline]
-    pub fn get_field_side_value(&self, field: FieldName, side: SelectedSide) -> Option<serde_json::Value> {
+    pub fn get_field_side_value(
+        &self,
+        field: FieldName,
+        side: SelectedSide,
+    ) -> Option<serde_json::Value> {
         self.fields.get(field).and_then(|v| v.get_side_value(side))
     }
 
@@ -330,21 +347,19 @@ impl CompareContainer {
     }
 }
 
-
-
-
-pub fn morph_map_value<V: Serialize + Into<CompareValue> + Clone>(value: V) -> serde_json::Result<MapValue> {
+pub fn morph_map_value<V: Serialize + Into<CompareValue> + Clone>(
+    value: V,
+) -> serde_json::Result<MapValue> {
     Ok(MapValue {
         original_value: serde_json::to_value(value.clone())?,
         display_value: value.into(),
     })
 }
 
-
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum SelectedSide {
     Left,
-    Right
+    Right,
 }
 
 impl SelectedSide {
@@ -357,13 +372,11 @@ impl SelectedSide {
     }
 }
 
-
 #[derive(Debug, PartialEq)]
 pub enum CompareDisplay {
     Text,
     Image,
 }
-
 
 #[derive(Debug, PartialEq)]
 pub(crate) struct CompareRow {
@@ -385,22 +398,22 @@ impl CompareRow {
     }
 }
 
-
 pub trait Comparable {
     fn create_comparison_with(&self, other: &Self) -> serde_json::Result<CompareContainer>;
-    fn create_from_comparison(map: HashMap<FieldName, serde_json::Value>) -> serde_json::Result<Self> where Self: Sized;
+    fn create_from_comparison(
+        map: HashMap<FieldName, serde_json::Value>,
+    ) -> serde_json::Result<Self>
+    where
+        Self: Sized;
 
     fn create_map(&self) -> serde_json::Result<MapContainer>;
 }
-
 
 #[derive(Debug, PartialEq)]
 pub struct MapValue {
     pub display_value: CompareValue,
     pub original_value: serde_json::Value,
 }
-
-
 
 #[derive(Debug, PartialEq)]
 pub enum CompareValue {
@@ -471,7 +484,6 @@ impl From<bool> for CompareValue {
         Self::Single(value.to_string())
     }
 }
-
 
 impl From<Vec<String>> for CompareValue {
     fn from(value: Vec<String>) -> Self {

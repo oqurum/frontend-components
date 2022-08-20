@@ -13,8 +13,8 @@
 pub mod component;
 
 pub mod api;
-pub mod util;
-pub mod specific;
 pub mod error;
+pub mod specific;
+pub mod util;
 
 pub use specific::*;

@@ -1,14 +1,21 @@
 // TODO: Make Clickable
 
-use gloo_file::{FileList, Blob};
+use gloo_file::{Blob, FileList};
 use gloo_utils::window;
-use wasm_bindgen::{JsCast, prelude::Closure, JsValue};
+use wasm_bindgen::{prelude::Closure, JsCast, JsValue};
 use wasm_bindgen_futures::JsFuture;
 use web_sys::{HtmlElement, RequestInit};
 use yew::prelude::*;
 
-
-const PREV_DEFAULT_FN_NAMES: [&str; 7] = ["drag", "dragstart", "dragend", "dragover", "dragenter", "dragleave", "drop"];
+const PREV_DEFAULT_FN_NAMES: [&str; 7] = [
+    "drag",
+    "dragstart",
+    "dragend",
+    "dragover",
+    "dragenter",
+    "dragleave",
+    "drop",
+];
 const DRAGOVER_EVENTS: [&str; 2] = ["dragover", "dragenter"];
 const DRAGLEAVE_EVENTS: [&str; 3] = ["dragleave", "dragend", "drop"];
 
@@ -22,10 +29,8 @@ pub struct Property {
 
     // TODO: can_drop
     // TODO: can_click
-
-    pub on_upload: Option<Callback<()>>
+    pub on_upload: Option<Callback<()>>,
 }
-
 
 pub enum Msg {
     Ignore,
@@ -72,17 +77,15 @@ impl Component for UploadModule {
                 let cb = ctx.props().on_upload.clone();
                 let upload_url = ctx.props().upload_url.clone();
 
-                ctx.link()
-                .send_future(async move {
+                ctx.link().send_future(async move {
                     for file in files.iter() {
                         let mut opts = RequestInit::new();
                         opts.method("POST");
                         opts.body(Some(&JsValue::from((file as &Blob).clone())));
 
-                        let _ = JsFuture::from(window().fetch_with_str_and_init(
-                            &upload_url,
-                            &opts
-                        )).await;
+                        let _ =
+                            JsFuture::from(window().fetch_with_str_and_init(&upload_url, &opts))
+                                .await;
                     }
 
                     if let Some(cb) = cb {
@@ -127,7 +130,8 @@ impl Component for UploadModule {
 
         self.disable();
 
-        { // Prevent Defaults
+        {
+            // Prevent Defaults
             for name in PREV_DEFAULT_FN_NAMES {
                 let evee = Closure::wrap(Box::new(move |event: Event| {
                     event.prevent_default();
@@ -140,22 +144,28 @@ impl Component for UploadModule {
             }
         }
 
-        { // Drag Over
+        {
+            // Drag Over
             for name in DRAGOVER_EVENTS {
                 let link = ctx.link().clone();
 
-                let evee = Closure::wrap(Box::new(move || link.send_message(Msg::OnDragOver)) as Box<dyn FnMut()>);
+                let evee = Closure::wrap(
+                    Box::new(move || link.send_message(Msg::OnDragOver)) as Box<dyn FnMut()>
+                );
                 let _ = cont.add_event_listener_with_callback(name, evee.as_ref().unchecked_ref());
 
                 self.events.push((name, evee));
             }
         }
 
-        { // Drag Leave
+        {
+            // Drag Leave
             for name in DRAGLEAVE_EVENTS {
                 let link = ctx.link().clone();
 
-                let evee = Closure::wrap(Box::new(move || link.send_message(Msg::OnDragLeave)) as Box<dyn FnMut()>);
+                let evee = Closure::wrap(
+                    Box::new(move || link.send_message(Msg::OnDragLeave)) as Box<dyn FnMut()>
+                );
                 let _ = cont.add_event_listener_with_callback(name, evee.as_ref().unchecked_ref());
 
                 self.events.push((name, evee));

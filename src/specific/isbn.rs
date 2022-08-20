@@ -1,5 +1,3 @@
-
-
 // Used to help handle ids a little better "amazon:{id}", "amazon_uk:{id}", "goodreads:{id}", "isbn:{id}", "google:{id}", "uuid:{id}", "urn:uuid:{id}", "urn:isbn:{id}"
 pub fn parse_book_id(value: &str) -> IdType {
     if let Some((prefix, suffix)) = value.rsplit_once(':') {
@@ -7,11 +5,9 @@ pub fn parse_book_id(value: &str) -> IdType {
         let suffix = suffix.trim().to_owned();
 
         match prefix.as_str() {
-            "urn:isbn" |
-            "isbn" => IdType::Isbn(suffix),
+            "urn:isbn" | "isbn" => IdType::Isbn(suffix),
 
-            "urn:uuid" |
-            "uuid" => IdType::Uuid(suffix),
+            "urn:uuid" | "uuid" => IdType::Uuid(suffix),
 
             _ => IdType::UnknownKeyValue(prefix, suffix),
         }
@@ -25,13 +21,15 @@ pub enum IdType {
     Uuid(String),
 
     UnknownKeyValue(String, String),
-    UnknownValue(String)
+    UnknownValue(String),
 }
 
 impl IdType {
     pub fn get_possible_isbn_value(&self) -> Option<&str> {
         match self {
-            Self::UnknownValue(v) if v.chars().all(|v| ('0'..='9').contains(&v)) => Some(v.as_str()),
+            Self::UnknownValue(v) if v.chars().all(|v| ('0'..='9').contains(&v)) => {
+                Some(v.as_str())
+            }
             Self::Isbn(v) => Some(v.as_str()),
 
             _ => None,
@@ -55,7 +53,6 @@ impl IdType {
             Self::UnknownValue(v) => Some(v),
         }
     }
-
 
     /// Attempts to return an ISBN type of 13 or 10 in that order.
     pub fn as_isbn_13_or_10(&self) -> Option<String> {
@@ -98,7 +95,7 @@ pub fn parse_isbn_10(value: &str) -> Option<String> {
     for dig_str in parse.take(9) {
         let dig = match dig_str.parse::<usize>() {
             Ok(v) => v,
-            Err(_) => return None
+            Err(_) => return None,
         };
 
         compiled.push_str(dig_str);
@@ -116,10 +113,15 @@ pub fn parse_isbn_13(value: &str) -> Option<String> {
 
     let mut compiled = String::new();
 
-    for (i, dig_str) in value.split("").filter(|v| *v != "-" && !v.is_empty()).take(13).enumerate() {
+    for (i, dig_str) in value
+        .split("")
+        .filter(|v| *v != "-" && !v.is_empty())
+        .take(13)
+        .enumerate()
+    {
         let dig = match dig_str.parse::<usize>() {
             Ok(v) => v,
-            Err(_) => return None
+            Err(_) => return None,
         };
 
         compiled.push_str(dig_str);
@@ -144,7 +146,7 @@ pub fn isbn_10_to_13(value: &str) -> Option<String> {
 
         let dig = match dig_str.parse::<usize>() {
             Ok(v) => v,
-            Err(_) => return None
+            Err(_) => return None,
         };
 
         compiled.push_str(dig_str);

@@ -1,5 +1,4 @@
-use serde::{Serialize, Deserialize};
-
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct AuthFormLink {
@@ -13,8 +12,6 @@ pub struct AuthFormLink {
     pub scope: Scope,
 }
 
-
-
 #[derive(Debug, Serialize, Deserialize)]
 pub struct AuthQueryHandshake {
     /// Used for verifying
@@ -27,8 +24,6 @@ pub struct AuthQueryHandshake {
 
     pub scope: Scope,
 }
-
-
 
 #[derive(Debug, PartialEq, Clone, Copy, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]

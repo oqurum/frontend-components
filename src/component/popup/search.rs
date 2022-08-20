@@ -5,13 +5,11 @@ use wasm_bindgen::{JsCast, UnwrapThrowExt};
 use web_sys::HtmlInputElement;
 use yew::prelude::*;
 
-use crate::util::{LoadingItem, truncate_on_indices, upper_case_first_char};
+use crate::util::{truncate_on_indices, upper_case_first_char, LoadingItem};
 
 use super::{Popup, PopupType};
 
-
 type SearchResponse<Id> = std::result::Result<HashMap<String, Vec<SearchItem<Id>>>, String>;
-
 
 #[derive(Properties, PartialEq)]
 pub struct Property<Id: PartialEq> {
@@ -28,7 +26,6 @@ pub struct Property<Id: PartialEq> {
     pub input_value: String,
 }
 
-
 pub enum Msg<Id> {
     BookSearchResponse(String, SearchResponse<Id>),
 
@@ -37,7 +34,6 @@ pub enum Msg<Id> {
     OnChangeTab(String),
     OnSelectItem(Id),
 }
-
 
 pub struct PopupSearch<Id> {
     cached_posters: Option<LoadingItem<SearchResponse<Id>>>,
@@ -70,7 +66,9 @@ impl<Id: Clone + PartialEq + 'static> Component for PopupSearch<Id> {
 
                 ctx.props().call_search.emit(CallSearch {
                     search: search.clone(),
-                    response: ctx.link().callback(move |v| Msg::BookSearchResponse(search.clone(), v))
+                    response: ctx
+                        .link()
+                        .callback(move |v| Msg::BookSearchResponse(search.clone(), v)),
                 });
             }
 
@@ -186,7 +184,6 @@ impl<Id: Clone + PartialEq + 'static> PopupSearch<Id> {
         }
     }
 
-
     fn render_poster_container(site: &str, item: &SearchItem<Id>, ctx: &Context<Self>) -> Html {
         let id = item.id.clone();
 
@@ -210,7 +207,6 @@ impl<Id: Clone + PartialEq + 'static> PopupSearch<Id> {
     }
 }
 
-
 #[derive(Clone)]
 pub struct SearchItem<Id> {
     pub id: Id,
@@ -222,9 +218,7 @@ pub struct SearchItem<Id> {
     pub author: Option<String>,
 }
 
-
-
 pub struct CallSearch<Id> {
     pub search: String,
-    pub response: Callback<SearchResponse<Id>>
+    pub response: Callback<SearchResponse<Id>>,
 }

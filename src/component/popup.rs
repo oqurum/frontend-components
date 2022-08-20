@@ -1,15 +1,14 @@
-use std::{rc::Rc, cell::Cell};
+use std::{cell::Cell, rc::Rc};
 
 use gloo_utils::body;
 use wasm_bindgen::{prelude::Closure, JsCast};
-use web_sys::{MouseEvent, Element};
+use web_sys::{Element, MouseEvent};
 use yew::prelude::*;
 
-use crate::util::{does_parent_contain_class, does_parent_contain_attribute};
+use crate::util::{does_parent_contain_attribute, does_parent_contain_class};
 
-
-pub mod compare;
 pub mod button;
+pub mod compare;
 pub mod search;
 
 static YEW_CLOSE_POPUP: &str = "yew_close_popup";
@@ -32,12 +31,10 @@ impl PopupType {
             // If we didn't click inside of the container
             Self::AtPoint(_, _) if !does_parent_contain_class(&element, "popup-at-point") => true,
             // Otherwise just check for a "data-close-popup" attribute
-            _ => does_parent_contain_attribute(&element, YEW_CLOSE_POPUP)
+            _ => does_parent_contain_attribute(&element, YEW_CLOSE_POPUP),
         }
     }
 }
-
-
 
 #[derive(Properties, PartialEq)]
 pub struct Property {
@@ -47,9 +44,8 @@ pub struct Property {
     pub children: Children,
     pub type_of: PopupType,
 
-    pub on_close: Callback<()>
+    pub on_close: Callback<()>,
 }
-
 
 pub struct Popup {
     node_ref: NodeRef,
@@ -80,7 +76,7 @@ impl Component for Popup {
                 };
 
                 create_portal(display, body().into())
-            },
+            }
 
             PopupType::AtPoint(pos_x, pos_y) => {
                 let styling = format!("left: {}px; top: {}px;", pos_x, pos_y);
@@ -92,7 +88,7 @@ impl Component for Popup {
                 };
 
                 create_portal(display, body().into())
-            },
+            }
 
             PopupType::Display => {
                 html! {
@@ -100,7 +96,7 @@ impl Component for Popup {
                         { for ctx.props().children.iter() }
                     </div>
                 }
-            },
+            }
         }
     }
 
@@ -110,7 +106,8 @@ impl Component for Popup {
         // FIX: rendered would be called again if we clicked an element containing another onclick event.
         // Resulted in our previous event being overwritten but not removed from the listener.
         if let Some(func) = self.closure.take() {
-            let _ = body().remove_event_listener_with_callback("click", func.as_ref().unchecked_ref());
+            let _ =
+                body().remove_event_listener_with_callback("click", func.as_ref().unchecked_ref());
         }
 
         let viewing = ctx.props().type_of;
@@ -131,7 +128,8 @@ impl Component for Popup {
 
     fn destroy(&mut self, _ctx: &Context<Self>) {
         if let Some(func) = self.closure.take() {
-            let _ = body().remove_event_listener_with_callback("click", func.as_ref().unchecked_ref());
+            let _ =
+                body().remove_event_listener_with_callback("click", func.as_ref().unchecked_ref());
         }
     }
 }

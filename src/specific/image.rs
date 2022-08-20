@@ -1,8 +1,6 @@
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
-
 pub static MISSING_THUMB_PATH: &str = "/images/missingthumbnail.jpg";
-
 
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
 pub enum ImageType {
@@ -25,12 +23,10 @@ impl ImageType {
     }
 }
 
-
-
 #[derive(Debug, Clone, PartialEq)]
 pub enum ThumbnailStore {
     Path(String),
-    None
+    None,
 }
 
 impl ThumbnailStore {
@@ -69,7 +65,6 @@ impl From<String> for ThumbnailStore {
     }
 }
 
-
 impl From<Option<String>> for ThumbnailStore {
     fn from(value: Option<String>) -> Self {
         value.map(|v| v.into()).unwrap_or(Self::None)
@@ -82,11 +77,11 @@ impl From<Option<&str>> for ThumbnailStore {
     }
 }
 
-
 impl<'de> Deserialize<'de> for ThumbnailStore {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
-        D: Deserializer<'de> {
+        D: Deserializer<'de>,
+    {
         Ok(Option::<String>::deserialize(deserializer)?.into())
     }
 }
@@ -94,7 +89,8 @@ impl<'de> Deserialize<'de> for ThumbnailStore {
 impl Serialize for ThumbnailStore {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
-        S: Serializer {
+        S: Serializer,
+    {
         self.as_value().serialize(serializer)
     }
 }

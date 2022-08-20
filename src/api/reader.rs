@@ -1,8 +1,6 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 use super::librarian::Scope;
-
-
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct VerifyAgentQuery {

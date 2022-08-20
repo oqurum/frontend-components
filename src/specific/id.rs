@@ -1,12 +1,19 @@
-use std::{ops::Deref, fmt::{Display, self}, num::ParseIntError, str::FromStr};
+use std::{
+    fmt::{self, Display},
+    num::ParseIntError,
+    ops::Deref,
+    str::FromStr,
+};
 
 #[cfg(feature = "backend")]
-use rusqlite::{Result, types::{FromSql, FromSqlResult, ValueRef, ToSql, ToSqlOutput}};
+use rusqlite::{
+    types::{FromSql, FromSqlResult, ToSql, ToSqlOutput, ValueRef},
+    Result,
+};
 
-use serde::{Serialize, Deserialize, Deserializer, Serializer};
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 use crate::ImageType;
-
 
 #[macro_export]
 macro_rules! create_single_id {
@@ -42,13 +49,19 @@ macro_rules! create_single_id {
         }
 
         impl<'de> Deserialize<'de> for $name {
-            fn deserialize<D>(deserializer: D) -> Result<Self, D::Error> where D: Deserializer<'de> {
+            fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+            where
+                D: Deserializer<'de>,
+            {
                 Ok(Self(usize::deserialize(deserializer)?))
             }
         }
 
         impl Serialize for $name {
-            fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error> where S: Serializer {
+            fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+            where
+                S: Serializer,
+            {
                 usize::serialize(&self.0, serializer)
             }
         }
@@ -130,20 +143,25 @@ impl ImageIdType {
         }
     }
 
-
     fn as_string(&self) -> String {
         format!("{}-{}", self.id, self.type_of.as_num())
     }
 }
 
 impl<'de> Deserialize<'de> for ImageIdType {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error> where D: Deserializer<'de> {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
         Ok(Self::from_str(&String::deserialize(deserializer)?).unwrap())
     }
 }
 
 impl Serialize for ImageIdType {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error> where S: Serializer {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
         String::serialize(&self.as_string(), serializer)
     }
 }
@@ -159,14 +177,18 @@ impl FromStr for ImageIdType {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         // TODO: Error handling.
-        let split = s.split_once('-')
+        let split = s
+            .split_once('-')
             .and_then(|(l, r)| Some((l.parse().ok()?, ImageType::from_number(r.parse().ok()?)?)));
 
         Ok(if let Some((id, type_of)) = split {
             Self { id, type_of }
         } else {
             // TODO: Remove.
-            Self { id: 0, type_of: ImageType::Book }
+            Self {
+                id: 0,
+                type_of: ImageType::Book,
+            }
         })
     }
 }

@@ -1,9 +1,7 @@
-use serde::{Serialize, Deserialize};
-
+use serde::{Deserialize, Serialize};
 
 pub mod librarian;
 pub mod reader;
-
 
 // List Response
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -20,8 +18,6 @@ pub struct DeletionResponse {
     pub total: usize,
 }
 
-
-
 // TODO: Could just be an enum.
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct WrappingResponse<V> {
@@ -31,11 +27,17 @@ pub struct WrappingResponse<V> {
 
 impl<V> WrappingResponse<V> {
     pub fn okay(value: V) -> Self {
-        Self { resp: Some(value), error: None }
+        Self {
+            resp: Some(value),
+            error: None,
+        }
     }
 
     pub fn error<S: Into<String>>(value: S) -> Self {
-        Self { resp: None, error: Some(ApiErrorResponse::new(value)) }
+        Self {
+            resp: None,
+            error: Some(ApiErrorResponse::new(value)),
+        }
     }
 
     pub fn ok(self) -> std::result::Result<V, ApiErrorResponse> {
@@ -66,7 +68,6 @@ impl<V> WrappingResponse<V> {
     }
 }
 
-
 #[derive(Debug, Serialize, Deserialize, Clone, thiserror::Error)]
 pub struct ApiErrorResponse {
     pub description: String,
@@ -74,7 +75,9 @@ pub struct ApiErrorResponse {
 
 impl ApiErrorResponse {
     pub fn new<S: Into<String>>(value: S) -> Self {
-        Self { description: value.into() }
+        Self {
+            description: value.into(),
+        }
     }
 }
 
