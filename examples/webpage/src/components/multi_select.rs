@@ -34,7 +34,7 @@ pub fn _multi_select() -> Html {
 
     html! {
         <>
-            <h3>{ "Viewing Multi Select" }</h3>
+            <h3>{ "Viewing Only" }</h3>
             <br />
 
             // CHECK: on_event shouldn't do anything.
@@ -46,9 +46,8 @@ pub fn _multi_select() -> Html {
             }
             </MultiSelectModule<usize>>
 
-            <br />
 
-            <h3>{ "Editing Multi Select" }</h3>
+            <h3>{ "Editing" }</h3>
             <br />
 
             <MultiSelectModule<usize> editing=true on_event={on_event.clone()}>
@@ -59,7 +58,8 @@ pub fn _multi_select() -> Html {
             }
             </MultiSelectModule<usize>>
 
-            <h3>{ "Cannot Create Multi Select" }</h3>
+
+            <h3>{ "Create Disabled" }</h3>
             <br />
 
             <MultiSelectModule<usize> editing=true create_new=false {on_event}>
