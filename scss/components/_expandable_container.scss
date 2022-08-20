@@ -9,7 +9,7 @@
         text-overflow: ellipsis;
 
         &.expanded {
-            -webkit-line-clamp: none;
+            -webkit-line-clamp: none !important;
         }
     }
 
