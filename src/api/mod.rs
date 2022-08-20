@@ -18,52 +18,39 @@ pub struct DeletionResponse {
     pub total: usize,
 }
 
-// TODO: Could just be an enum.
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct WrappingResponse<V> {
-    pub resp: Option<V>,
-    pub error: Option<ApiErrorResponse>,
+pub enum WrappingResponse<V> {
+    Resp(V),
+    Error(ApiErrorResponse),
 }
 
 impl<V> WrappingResponse<V> {
     pub fn okay(value: V) -> Self {
-        Self {
-            resp: Some(value),
-            error: None,
-        }
+        Self::Resp(value)
     }
 
     pub fn error<S: Into<String>>(value: S) -> Self {
-        Self {
-            resp: None,
-            error: Some(ApiErrorResponse::new(value)),
-        }
+        Self::Error(ApiErrorResponse::new(value))
     }
 
     pub fn ok(self) -> std::result::Result<V, ApiErrorResponse> {
-        if let Some(resp) = self.resp {
-            Ok(resp)
-        } else if let Some(err) = self.error {
-            Err(err)
-        } else {
-            unreachable!()
+        match self {
+            Self::Resp(v) => Ok(v),
+            Self::Error(e) => Err(e),
         }
     }
 
     pub fn as_ok(&self) -> std::result::Result<&V, &ApiErrorResponse> {
-        if let Some(resp) = self.resp.as_ref() {
-            Ok(resp)
-        } else if let Some(err) = self.error.as_ref() {
-            Err(err)
-        } else {
-            unreachable!()
+        match self {
+            Self::Resp(v) => Ok(v),
+            Self::Error(e) => Err(e),
         }
     }
 
     pub fn map<N, F: Fn(V) -> N>(self, func: F) -> WrappingResponse<N> {
-        WrappingResponse {
-            resp: self.resp.map(func),
-            error: self.error,
+        match self {
+            Self::Resp(v) => WrappingResponse::Resp(func(v)),
+            Self::Error(e) => WrappingResponse::Error(e),
         }
     }
 }
