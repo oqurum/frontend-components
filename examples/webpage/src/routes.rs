@@ -10,6 +10,9 @@ pub enum AppRoute {
 
     #[at("/multiselect")]
     MultiSelect,
+
+    #[at("/expandingtext")]
+    ExpandableContainer,
 }
 
 pub fn switch(routes: &AppRoute) -> Html {
@@ -17,6 +20,8 @@ pub fn switch(routes: &AppRoute) -> Html {
         AppRoute::Home => html! { <Home /> },
 
         AppRoute::MultiSelect => html! { <MultiSelectPage /> },
+
+        AppRoute::ExpandableContainer => html! { <ExpandableContainerPage /> },
     }
 }
 
@@ -25,6 +30,7 @@ pub fn home() -> Html {
     html! {
         <ul>
             <li><Link<AppRoute> to={ AppRoute::MultiSelect }>{ "MultiSelect" }</Link<AppRoute>></li>
+            <li><Link<AppRoute> to={ AppRoute::ExpandableContainer }>{ "Expandable Container" }</Link<AppRoute>></li>
         </ul>
     }
 }

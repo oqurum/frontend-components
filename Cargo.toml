@@ -13,7 +13,7 @@ publish = false
 
 [features]
 default = []
-frontend = ["gloo-file", "gloo-timers", "gloo-utils", "wasm-bindgen", "wasm-bindgen-futures", "web-sys", "yew"]
+frontend = ["gloo-file", "gloo-timers", "gloo-utils", "wasm-bindgen", "wasm-bindgen-futures", "web-sys", "yew", "yew-hooks"]
 backend = ["rusqlite"]
 
 
@@ -38,6 +38,7 @@ gloo-utils = { version = "0.1", optional = true }
 wasm-bindgen = { version = "0.2", optional = true }
 wasm-bindgen-futures = { version = "0.4", optional = true }
 yew = { version = "0.19", optional = true }
+yew-hooks = { version = "0.1", optional = true }
 
 [dependencies.web-sys]
 version = "0.3"

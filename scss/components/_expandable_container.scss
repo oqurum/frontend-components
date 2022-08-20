@@ -1,0 +1,30 @@
+.expandable-container {
+    > .expanding-container {
+        max-inline-size: var(--text-size-content-4);
+        white-space: pre-wrap;
+        display: -webkit-box;
+        -webkit-line-clamp: 6;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        &.expanded {
+            -webkit-line-clamp: none;
+        }
+    }
+
+    > .expanding-button {
+        cursor: pointer;
+        color: var(--text-2);
+        font-weight: bold;
+
+        &:hover {
+            color: var(--text-1);
+        }
+
+        > .material-icons {
+            vertical-align: text-bottom;
+            font-size: 21px;
+        }
+    }
+}
