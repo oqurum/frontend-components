@@ -1,6 +1,10 @@
 #![warn(
     clippy::unwrap_used,
-    clippy::expect_used
+    clippy::expect_used,
+    clippy::unimplemented,
+    clippy::unreachable,
+    clippy::todo,
+    clippy::panic
 )]
 
 // TODO: Remove unwrap_throw / expect_throw methods.
