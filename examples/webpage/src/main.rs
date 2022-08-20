@@ -1,9 +1,8 @@
 use wasm_bindgen::prelude::*;
 
 mod app;
-mod routes;
 mod components;
-
+mod routes;
 
 pub fn main() -> Result<(), JsValue> {
     wasm_logger::init(wasm_logger::Config::default());

@@ -154,7 +154,8 @@ impl<'de> Deserialize<'de> for ImageIdType {
         D: Deserializer<'de>,
     {
         let value = String::deserialize(deserializer)?;
-        Self::from_str(&value).map_err(|_| serde::de::Error::custom("Unable to convert String to ImageIdType"))
+        Self::from_str(&value)
+            .map_err(|_| serde::de::Error::custom("Unable to convert String to ImageIdType"))
     }
 }
 

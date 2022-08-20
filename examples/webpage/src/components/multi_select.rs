@@ -2,8 +2,6 @@ use common::component::multi_select::*;
 use yew::prelude::*;
 use yew_hooks::use_list;
 
-
-
 #[function_component(MultiSelectPage)]
 pub fn _multi_select() -> Html {
     let selected_hook = use_list(vec![0, 3]);
@@ -22,14 +20,16 @@ pub fn _multi_select() -> Html {
         MultiSelectEvent::Toggle { toggle, id } => {
             if toggle {
                 selected_hook_event.push(id);
-            } else if let Some(index) = { let v = selected_hook_event.current().iter().position(|v| *v == id); v } {
+            } else if let Some(index) = {
+                let v = selected_hook_event.current().iter().position(|v| *v == id);
+                v
+            } {
                 // Wrapped to prevent panic.
                 selected_hook_event.remove(index);
             }
         }
 
-        MultiSelectEvent::Create(_) |
-        MultiSelectEvent::Input { .. } => (),
+        MultiSelectEvent::Create(_) | MultiSelectEvent::Input { .. } => (),
     });
 
     html! {

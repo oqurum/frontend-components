@@ -48,7 +48,8 @@ impl<'de> Deserialize<'de> for Source {
         D: Deserializer<'de>,
     {
         let resp = String::deserialize(deserializer)?;
-        Self::try_from(resp).map_err(|_| serde::de::Error::custom("Unable to convert String to Source"))
+        Self::try_from(resp)
+            .map_err(|_| serde::de::Error::custom("Unable to convert String to Source"))
     }
 }
 
