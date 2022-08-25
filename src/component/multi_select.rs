@@ -405,7 +405,6 @@ impl<Ident: Clone + PartialEq + 'static> MultiSelectModule<Ident> {
 #[derive(Clone)]
 pub struct MultiSelectNewItem<Ident: Clone> {
     pub name: String,
-    #[must_use = "Register the Value with MultiSelect"]
     /// Registers the new item in the Multi Select Component
     pub register: Callback<Ident>,
 }
@@ -433,7 +432,7 @@ impl<Ident: Clone + PartialEq> PartialEq for MultiSelectItemProps<Ident> {
     }
 }
 
-#[derive(Clone, PartialEq)]
+#[derive(Clone, PartialEq, Eq)]
 pub enum MultiSelectItemMessage {
     Selected,
 }

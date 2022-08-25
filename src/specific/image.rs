@@ -2,7 +2,7 @@ use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 pub static MISSING_THUMB_PATH: &str = "/images/missingthumbnail.jpg";
 
-#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum ImageType {
     Book = 0,
     Person,
@@ -23,7 +23,7 @@ impl ImageType {
     }
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ThumbnailStore {
     Path(String),
     None,

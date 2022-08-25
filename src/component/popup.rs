@@ -13,7 +13,7 @@ pub mod search;
 
 static YEW_CLOSE_POPUP: &str = "yew_close_popup";
 
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 pub enum PopupType {
     /// Full foreground overlay
     FullOverlay,

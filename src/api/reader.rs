@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use super::librarian::Scope;
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct VerifyAgentQuery {
     /// Metadata Agent Member ID used to link account with.
     pub member_id: usize,

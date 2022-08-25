@@ -12,7 +12,7 @@ pub use isbn::*;
 pub use language::*;
 pub use source::*;
 
-#[derive(Debug, PartialEq, Serialize, Deserialize, Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, Serialize, Deserialize, Clone, Copy)]
 pub enum Either<A, B> {
     Left(A),
     Right(B),

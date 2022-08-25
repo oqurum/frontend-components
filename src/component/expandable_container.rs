@@ -1,3 +1,4 @@
+use std::fmt::Write;
 use wasm_bindgen::UnwrapThrowExt;
 use web_sys::HtmlElement;
 use yew::prelude::*;
@@ -42,7 +43,7 @@ pub fn _expanding_text_comp(props: &ExpandableContainerProps) -> Html {
     let mut cont_style = String::new();
 
     if let Some(max_lines) = props.max_lines {
-        cont_style += &format!("-webkit-line-clamp: {max_lines};");
+        let _ = write!(cont_style, "-webkit-line-clamp: {max_lines};");
     }
 
     html! {

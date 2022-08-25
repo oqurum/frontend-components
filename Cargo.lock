@@ -1142,8 +1142,6 @@ version = "0.1.0"
 dependencies = [
  "common",
  "grass",
- "js-sys",
- "log",
  "wasm-bindgen",
  "wasm-logger",
  "yew",

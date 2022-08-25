@@ -356,7 +356,7 @@ pub fn morph_map_value<V: Serialize + Into<CompareValue> + Clone>(
     })
 }
 
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum SelectedSide {
     Left,
     Right,
@@ -372,7 +372,7 @@ impl SelectedSide {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum CompareDisplay {
     Text,
     Image,
@@ -409,13 +409,13 @@ pub trait Comparable {
     fn create_map(&self) -> serde_json::Result<MapContainer>;
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct MapValue {
     pub display_value: CompareValue,
     pub original_value: serde_json::Value,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum CompareValue {
     Single(String),
     Array(Vec<String>),

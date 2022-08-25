@@ -122,7 +122,7 @@ create_single_id!(TagId);
 
 // TODO: Macro
 
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct ImageIdType {
     pub id: usize,
     pub type_of: ImageType, // We don't use the full u8. We use up 4 bits.

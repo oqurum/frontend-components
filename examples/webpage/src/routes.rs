@@ -3,7 +3,7 @@ use yew_router::{prelude::Link, Routable};
 
 use crate::components::*;
 
-#[derive(Routable, Debug, Clone, PartialEq)]
+#[derive(Routable, Debug, Clone, PartialEq, Eq)]
 pub enum AppRoute {
     #[at("/")]
     Home,

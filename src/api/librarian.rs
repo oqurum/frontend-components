@@ -25,7 +25,7 @@ pub struct AuthQueryHandshake {
     pub scope: Scope,
 }
 
-#[derive(Debug, PartialEq, Clone, Copy, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum Scope {
     ServerRegister,
