@@ -7,7 +7,7 @@ use std::{
 
 #[cfg(feature = "backend")]
 use rusqlite::{
-    types::{FromSql, FromSqlResult, ToSql, ToSqlOutput, ValueRef},
+    types::{FromSql, FromSqlResult, ToSql, ToSqlOutput, Value, ValueRef},
     Result,
 };
 
@@ -165,6 +165,22 @@ impl Serialize for ImageIdType {
         S: Serializer,
     {
         String::serialize(&self.as_string(), serializer)
+    }
+}
+
+#[cfg(feature = "backend")]
+impl FromSql for ImageIdType {
+    #[inline]
+    fn column_result(value: ValueRef<'_>) -> FromSqlResult<Self> {
+        Ok(Self::from_str(&String::column_result(value)?).unwrap())
+    }
+}
+
+#[cfg(feature = "backend")]
+impl ToSql for ImageIdType {
+    #[inline]
+    fn to_sql(&self) -> Result<ToSqlOutput<'_>> {
+        Ok(ToSqlOutput::Owned(Value::Text(self.as_string())))
     }
 }
 
