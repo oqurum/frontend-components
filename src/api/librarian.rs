@@ -41,10 +41,10 @@ pub enum Scope {
 mod search {
     use chrono::{DateTime, Utc};
     use serde::{Serialize, Deserialize};
-    use crate::{api::QueryListResponse, util::{serialize_datetime, serialize_datetime_opt, deserialize_datetime_opt, deserialize_datetime}};
+    use crate::{api::{QueryListResponse, WrappingResponse}, util::{serialize_datetime, serialize_datetime_opt, deserialize_datetime_opt, deserialize_datetime}};
 
 
-    pub type BookSearchResponse = QueryListResponse<PublicBook>;
+    pub type BookSearchResponse = WrappingResponse<QueryListResponse<PublicBook>>;
 
 
     // Public Search
