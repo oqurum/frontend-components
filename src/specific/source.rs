@@ -1,4 +1,4 @@
-use std::{fmt, borrow::Cow};
+use std::{fmt, borrow::Cow, ops::Deref};
 
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
@@ -16,6 +16,14 @@ impl Agent {
 
     pub fn new_owned(value: String) -> Self {
         Self(Cow::Owned(value))
+    }
+}
+
+impl Deref for Agent {
+    type Target = Cow<'static, str>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
     }
 }
 
