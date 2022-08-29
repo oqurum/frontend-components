@@ -17,6 +17,14 @@ impl Agent {
     pub fn new_owned(value: String) -> Self {
         Self(Cow::Owned(value))
     }
+
+    pub fn into_cow(self) -> Cow<'static, str> {
+        self.0
+    }
+
+    pub fn into_owned(self) -> String {
+        self.0.into_owned()
+    }
 }
 
 impl Deref for Agent {
