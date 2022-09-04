@@ -1,12 +1,50 @@
-use std::fmt;
+use std::{fmt, borrow::Cow, ops::Deref};
 
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 use crate::error::Error;
 
-#[derive(Debug, Clone, Default, PartialEq, Eq)]
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[serde(transparent)]
+pub struct Agent(Cow<'static, str>);
+
+impl Agent {
+    pub fn new_static(value: &'static str) -> Self {
+        Self(Cow::Borrowed(value))
+    }
+
+    pub fn new_owned(value: String) -> Self {
+        Self(Cow::Owned(value))
+    }
+
+    pub fn into_cow(self) -> Cow<'static, str> {
+        self.0
+    }
+
+    pub fn into_owned(self) -> String {
+        self.0.into_owned()
+    }
+}
+
+impl Deref for Agent {
+    type Target = Cow<'static, str>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl fmt::Display for Agent {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        self.0.fmt(f)
+    }
+}
+
+
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Source {
-    pub agent: String,
+    pub agent: Agent,
     pub value: String,
 }
 
@@ -23,7 +61,7 @@ impl TryFrom<&str> for Source {
         let (source, value) = value.split_once(':').ok_or(Error::SourceSplit)?;
 
         Ok(Self {
-            agent: source.to_owned(),
+            agent: Agent(Cow::Owned(source.to_owned())),
             value: value.to_owned(),
         })
     }
@@ -36,7 +74,7 @@ impl TryFrom<String> for Source {
         let (source, value) = value.split_once(':').ok_or(Error::SourceSplit)?;
 
         Ok(Self {
-            agent: source.to_owned(),
+            agent: Agent(Cow::Owned(source.to_owned())),
             value: value.to_owned(),
         })
     }
