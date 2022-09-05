@@ -4,6 +4,7 @@
     border-radius: var(--radius-2);
     border: var(--border-size-1) solid var(--brand) !important;
     display: flex !important;
+    flex-direction: row !important;
     align-items: center !important;
     cursor: pointer !important;
 
