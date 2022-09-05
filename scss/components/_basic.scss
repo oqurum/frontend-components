@@ -2,10 +2,10 @@
 
 .new-container {
     border-radius: var(--radius-2);
-    border: var(--border-size-1) solid var(--brand);
-    display: flex;
-    align-items: center;
-    cursor: pointer;
+    border: var(--border-size-1) solid var(--brand) !important;
+    display: flex !important;
+    align-items: center !important;
+    cursor: pointer !important;
 
     > span {
         text-align: center;

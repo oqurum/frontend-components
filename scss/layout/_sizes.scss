@@ -1,0 +1,42 @@
+// 1 100
+// 2 50
+// 3 33
+// 4 25
+// 5 20
+
+
+@for $idx from 1 to 6 {
+    .row-size-#{$idx} > * {
+        width: #{100 / $idx}#{"%"};
+    }
+}
+
+
+// Pocket Computers
+@media screen and (min-width: 615px) {
+    @for $idx from 1 to 6 {
+        .row-p-size-#{$idx} > * {
+            width: #{100 / $idx}#{"%"};
+        }
+    }
+}
+
+
+// Tabs
+@media screen and (min-width: 900px) {
+    @for $idx from 1 to 6 {
+        .row-t-size-#{$idx} > * {
+            width: #{100 / $idx}#{"%"};
+        }
+    }
+}
+
+
+// Desko
+@media screen and (min-width: 1000px) {
+    @for $idx from 1 to 6 {
+        .row-d-size-#{$idx} > * {
+            width: #{100 / $idx}#{"%"};
+        }
+    }
+}
