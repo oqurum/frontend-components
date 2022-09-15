@@ -1,14 +1,13 @@
-use crate::util::upper_case_first_char;
-
 pub static LANGUAGES: [&str; 1] = ["english"];
 
-pub fn get_language_id(value: &str) -> Option<usize> {
+pub fn get_language_id(value: &str) -> u16 {
     let value = value.to_lowercase();
-    LANGUAGES.iter().position(|v| *v == value)
+    LANGUAGES.iter().position(|v| *v == value).unwrap_or_default() as u16
 }
 
-pub fn get_language_name(value: u16) -> Option<String> {
+pub fn get_language_name(value: u16) -> &'static str {
     LANGUAGES
         .get(value as usize)
-        .map(|v| upper_case_first_char(v.to_string()))
+        .map(|v| *v)
+        .unwrap_or(LANGUAGES[0])
 }

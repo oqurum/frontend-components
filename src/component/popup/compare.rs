@@ -467,6 +467,12 @@ impl From<u64> for CompareValue {
     }
 }
 
+impl From<i64> for CompareValue {
+    fn from(value: i64) -> Self {
+        Self::Single(value.to_string())
+    }
+}
+
 impl From<f32> for CompareValue {
     fn from(value: f32) -> Self {
         Self::Single(value.to_string())
