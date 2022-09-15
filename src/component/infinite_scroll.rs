@@ -1,3 +1,4 @@
+use wasm_bindgen::UnwrapThrowExt;
 use web_sys::HtmlElement;
 use yew::prelude::*;
 use yew_hooks::use_event;
@@ -31,6 +32,20 @@ pub fn _component_fn(props: &InfiniteScrollProps) -> Html {
             scroll_pos: el.client_height() + el.scroll_top(),
             scroll_height: el.scroll_height(),
         });
+    });
+
+    let event = props.event.clone();
+    let enode = node.clone();
+    // TODO: Can cause infinite recursion if event Callback updates parent Component.
+    use_effect(move || {
+        let el = enode.cast::<HtmlElement>().unwrap_throw();
+
+        event.emit(InfiniteScrollEvent {
+            scroll_pos: el.client_height() + el.scroll_top(),
+            scroll_height: el.scroll_height(),
+        });
+
+        || {}
     });
 
     html! {
