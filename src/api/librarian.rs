@@ -54,7 +54,8 @@ mod search {
         BookList(QueryListResponse<PartialBook>),
         BookItem(Option<PublicBook>),
 
-        //
+        AuthorList(QueryListResponse<PublicAuthor>),
+        AuthorItem(Option<PublicAuthor>),
     }
 
 
@@ -73,6 +74,26 @@ mod search {
         pub server_id: String,
     }
 
+
+    // Author
+    #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+    pub struct PublicAuthor {
+        pub id: usize,
+
+        pub name: String,
+        pub description: Option<String>,
+        #[serde(serialize_with = "serialize_naivedate_opt", deserialize_with = "deserialize_naivedate_opt")]
+        pub birth_date: Option<NaiveDate>,
+
+        pub thumb_url: String,
+
+        #[serde(serialize_with = "serialize_datetime", deserialize_with = "deserialize_datetime")]
+        pub updated_at: DateTime<Utc>,
+        #[serde(serialize_with = "serialize_datetime", deserialize_with = "deserialize_datetime")]
+        pub created_at: DateTime<Utc>,
+    }
+
+    // Book
 
     #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
     pub struct PartialBook {
