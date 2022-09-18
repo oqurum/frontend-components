@@ -87,6 +87,8 @@ mod search {
 
         pub thumb_url: String,
 
+        pub other_names: Vec<String>,
+
         #[serde(serialize_with = "serialize_datetime", deserialize_with = "deserialize_datetime")]
         pub updated_at: DateTime<Utc>,
         #[serde(serialize_with = "serialize_datetime", deserialize_with = "deserialize_datetime")]
