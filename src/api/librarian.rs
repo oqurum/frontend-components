@@ -41,24 +41,59 @@ pub enum Scope {
 mod search {
     use chrono::{DateTime, Utc, NaiveDate};
     use serde::{Serialize, Deserialize};
-    use crate::{api::{QueryListResponse, WrappingResponse}, util::{serialize_datetime, serialize_datetime_opt, deserialize_datetime_opt, deserialize_datetime, serialize_naivedate_opt, deserialize_naivedate_opt}, PersonId, Either};
+    use crate::{api::{QueryListResponse, WrappingResponse}, util::{serialize_datetime, serialize_datetime_opt, deserialize_datetime_opt, deserialize_datetime, serialize_naivedate_opt, deserialize_naivedate_opt}, PersonId};
 
 
-    pub type BookSearchResponse = WrappingResponse<Either<QueryListResponse<PublicBook>, Option<PublicBook>>>;
+    pub type PublicSearchResponse = WrappingResponse<PublicSearchType>;
+    // TODO: Incorporate Authors, Collections, etc..
+
+
+    #[derive(Debug, Serialize, Deserialize, Clone)]
+    #[serde(tag = "type")]
+    pub enum PublicSearchType {
+        BookList(QueryListResponse<PartialBook>),
+        BookItem(Option<PublicBook>),
+
+        //
+    }
+
 
 
     // Public Search
     #[derive(Debug, Serialize, Deserialize, Clone)]
     pub struct GetSearchQuery {
         pub query: String,
+
         pub offset: Option<usize>,
         pub limit: Option<usize>,
+
         #[serde(default)]
         pub view_private: bool,
 
         pub server_id: String,
     }
 
+
+    #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+    pub struct PartialBook {
+        pub id: usize,
+
+        pub title: Option<String>,
+
+        pub description: Option<String>,
+        pub rating: f64,
+
+        pub thumb_url: String,
+
+        pub isbn_10: Option<String>,
+        pub isbn_13: Option<String>,
+
+        pub is_public: bool,
+
+        #[serde(serialize_with = "serialize_naivedate_opt", deserialize_with = "deserialize_naivedate_opt")]
+        pub available_at: Option<NaiveDate>,
+        pub language: u16,
+    }
 
     #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
     pub struct PublicBook {
