@@ -1,4 +1,4 @@
-use chrono::{Date, Utc, DateTime, TimeZone};
+use chrono::{Date, Utc, DateTime, TimeZone, NaiveDate};
 use serde::{Serializer, Deserializer, Serialize, Deserialize};
 
 /// Truncate string based off of char indices instead of bytes.
@@ -100,6 +100,22 @@ pub fn serialize_date<S>(value: &Date<Utc>, s: S) -> std::result::Result<S::Ok, 
     s.serialize_i64(value.and_hms(0, 0, 0).timestamp())
 }
 
+pub fn serialize_naivedate_opt<S>(value: &Option<NaiveDate>, s: S) -> std::result::Result<S::Ok, S::Error> where S: Serializer {
+    match value {
+        Some(v) => s.serialize_i64(v.and_hms(0, 0, 0).timestamp()),
+        None => s.serialize_none()
+    }
+}
+
+
 pub fn deserialize_date<'de, D>(value: D) -> std::result::Result<Date<Utc>, D::Error> where D: Deserializer<'de> {
     Ok(Utc.timestamp(i64::deserialize(value)?, 0).date())
+}
+
+pub fn deserialize_naivedate_opt<'de, D>(value: D) -> std::result::Result<Option<NaiveDate>, D::Error> where D: Deserializer<'de> {
+    if let Some(v) = Option::<i64>::deserialize(value)? {
+        Ok(Some(Utc.timestamp(v, 0).date_naive()))
+    } else {
+        Ok(None)
+    }
 }

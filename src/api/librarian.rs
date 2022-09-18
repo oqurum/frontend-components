@@ -39,12 +39,12 @@ pub enum Scope {
 
 
 mod search {
-    use chrono::{DateTime, Utc};
+    use chrono::{DateTime, Utc, NaiveDate};
     use serde::{Serialize, Deserialize};
-    use crate::{api::{QueryListResponse, WrappingResponse}, util::{serialize_datetime, serialize_datetime_opt, deserialize_datetime_opt, deserialize_datetime}};
+    use crate::{api::{QueryListResponse, WrappingResponse}, util::{serialize_datetime, serialize_datetime_opt, deserialize_datetime_opt, deserialize_datetime, serialize_naivedate_opt, deserialize_naivedate_opt}, PersonId, Either};
 
 
-    pub type BookSearchResponse = WrappingResponse<QueryListResponse<PublicBook>>;
+    pub type BookSearchResponse = WrappingResponse<Either<QueryListResponse<PublicBook>, Option<PublicBook>>>;
 
 
     // Public Search
@@ -75,11 +75,15 @@ mod search {
         pub isbn_10: Option<String>,
         pub isbn_13: Option<String>,
 
+        pub author_id: Option<PersonId>,
+        pub publisher: Option<String>,
+
         pub is_public: bool,
         pub edition_count: usize,
 
-        pub available_at: Option<String>,
-        pub language: Option<u16>,
+        #[serde(serialize_with = "serialize_naivedate_opt", deserialize_with = "deserialize_naivedate_opt")]
+        pub available_at: Option<NaiveDate>,
+        pub language: u16,
 
         #[serde(serialize_with = "serialize_datetime", deserialize_with = "deserialize_datetime")]
         pub created_at: DateTime<Utc>,
