@@ -49,7 +49,7 @@ mod search {
 
 
     #[derive(Debug, Serialize, Deserialize, Clone)]
-    #[serde(tag = "type")]
+    #[serde(tag = "type", content = "value")]
     pub enum PublicSearchType {
         BookList(QueryListResponse<PartialBook>),
         BookItem(Option<PublicBook>),
