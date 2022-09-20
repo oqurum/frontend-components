@@ -1,6 +1,7 @@
 
 .label-group {
 	display: flex;
+	flex-wrap: wrap;
 
 	> * {
 		margin: 0 2px;
