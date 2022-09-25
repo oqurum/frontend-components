@@ -52,12 +52,6 @@
 	border-radius: var(--radius-2);
 	border: var(--border-size-1) solid transparent;
 
-	// open-props fix
-	margin-block: unset;
-	margin-inline: unset;
-	padding-block: unset;
-	padding-inline: unset;
-
 	&:hover {
 		border-color: var(--brand);
 
@@ -80,20 +74,46 @@
 			border-radius: var(--radius-blob-5);
 		}
 
+		.top-left,
+		.top-right,
+		.bottom-left,
 		.bottom-right {
 			z-index: 99;
 			position: absolute;
-			bottom: 0px;
-			right: 3px;
+		}
+
+		.top-left.hover,
+		.top-right.hover,
+		.bottom-left.hover,
+		.bottom-right.hover {
 			display: none;
 		}
 
+		&:hover .bottom-left.hover,
+		&:hover .bottom-right.hover,
+		&:hover .top-left.hover,
+		&:hover .top-right.hover {
+			display: block;
+		}
+
+		.top-left {
+			top: 0px;
+			left: 4px;
+		}
+
+		.top-right {
+			top: 0px;
+			right: 3px;
+		}
+
+		.bottom-right {
+			bottom: 0px;
+			right: 3px;
+		}
+
 		.bottom-left {
-			z-index: 99;
-			position: absolute;
 			bottom: 0px;
 			left: 3px;
-			display: none;
 		}
 	}
 
