@@ -85,7 +85,7 @@ mod search {
         #[serde(serialize_with = "serialize_naivedate_opt", deserialize_with = "deserialize_naivedate_opt")]
         pub birth_date: Option<NaiveDate>,
 
-        pub thumb_url: String,
+        pub thumb_url: Option<String>,
 
         pub other_names: Vec<String>,
 
