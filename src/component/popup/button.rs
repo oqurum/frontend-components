@@ -56,7 +56,11 @@ impl Component for ButtonWithPopup {
                 <span
                     class="button material-icons"
                     title="More Options"
-                    onclick={ ctx.link().callback(|_| ButtonMsg::TogglePopup) }
+                    onclick={ ctx.link().callback(|e: MouseEvent| {
+                        e.prevent_default();
+
+                        ButtonMsg::TogglePopup
+                    }) }
                 >{ "more_horiz" }</span>
 
                 {
