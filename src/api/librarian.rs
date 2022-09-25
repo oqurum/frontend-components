@@ -106,7 +106,7 @@ mod search {
         pub description: Option<String>,
         pub rating: f64,
 
-        pub thumb_url: String,
+        pub thumb_url: Option<String>,
 
         pub isbn_10: Option<String>,
         pub isbn_13: Option<String>,
@@ -128,7 +128,7 @@ mod search {
         pub description: Option<String>,
         pub rating: f64,
 
-        pub thumb_url: String,
+        pub thumb_url: Option<String>,
 
         pub isbn_10: Option<String>,
         pub isbn_13: Option<String>,
