@@ -1,0 +1,23 @@
+.carousel {
+    display: flex;
+    position: relative;
+
+    .carousel-items {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        // scrollbar-width: none;
+        scroll-behavior: smooth;
+        scroll-snap-type: x mandatory;
+    }
+
+    .carousel-left-control,
+    .carousel-right-control {
+        height: 100%;
+        width: 9em;
+        background-color: #000;
+        justify-content: center;
+        display: flex;
+        align-items: center;
+    }
+}

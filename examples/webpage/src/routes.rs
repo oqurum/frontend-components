@@ -13,6 +13,9 @@ pub enum AppRoute {
 
     #[at("/expandingtext")]
     ExpandableContainer,
+
+    #[at("/carousel")]
+    Carousel,
 }
 
 pub fn switch(routes: &AppRoute) -> Html {
@@ -22,6 +25,8 @@ pub fn switch(routes: &AppRoute) -> Html {
         AppRoute::MultiSelect => html! { <MultiSelectPage /> },
 
         AppRoute::ExpandableContainer => html! { <ExpandableContainerPage /> },
+
+        AppRoute::Carousel => html! { <CarouselPage /> },
     }
 }
 
@@ -31,6 +36,7 @@ pub fn home() -> Html {
         <ul>
             <li><Link<AppRoute> to={ AppRoute::MultiSelect }>{ "MultiSelect" }</Link<AppRoute>></li>
             <li><Link<AppRoute> to={ AppRoute::ExpandableContainer }>{ "Expandable Container" }</Link<AppRoute>></li>
+            <li><Link<AppRoute> to={ AppRoute::Carousel }>{ "Carousel" }</Link<AppRoute>></li>
         </ul>
     }
 }
