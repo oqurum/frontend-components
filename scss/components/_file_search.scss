@@ -1,0 +1,21 @@
+.file-search {
+    > .location {
+        margin-bottom: 10px;
+    }
+
+    > .files {
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+
+        > .file {
+            padding: 5px;
+            background: var(--surface-1);
+            cursor: pointer;
+
+            &:nth-child(odd) {
+                background: var(--surface-2);
+            }
+        }
+    }
+}
