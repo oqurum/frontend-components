@@ -16,7 +16,7 @@ pub struct FileInfo {
 
 pub struct FileSearchRequest {
     pub path: PathBuf,
-    pub update: Callback<Vec<FileInfo>>,
+    pub update: Callback<(Option<PathBuf>, Vec<FileInfo>)>,
 }
 
 
@@ -43,7 +43,8 @@ pub struct FileSearchProps {
 
 pub enum Msg {
     OpenPath(PathBuf),
-    OpenResponse(Vec<FileInfo>),
+    // ( current_location, Files )
+    OpenResponse((Option<PathBuf>, Vec<FileInfo>)),
 
     TogglePopup,
     Submit,
@@ -144,8 +145,12 @@ impl Component for FileSearchComponent {
                 return false;
             }
 
-            Msg::OpenResponse(resp) => {
+            Msg::OpenResponse((fixed_set_location, resp)) => {
                 self.files = resp;
+
+                if let Some(location) = fixed_set_location {
+                    self.set_location = Some(location);
+                }
             }
 
             Msg::TogglePopup => {
