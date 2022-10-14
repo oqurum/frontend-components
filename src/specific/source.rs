@@ -54,6 +54,12 @@ impl fmt::Display for Source {
     }
 }
 
+impl PartialEq<Agent> for Source {
+    fn eq(&self, other: &Agent) -> bool {
+        &self.agent == other
+    }
+}
+
 impl TryFrom<&str> for Source {
     type Error = Error;
 
