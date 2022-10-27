@@ -167,7 +167,15 @@ impl Component for FileSearchComponent {
                 self.show_popup = !self.show_popup;
 
                 if self.show_popup {
-                    self.current_location = self.set_location.as_ref().unwrap_or(&self.cached_init_location).clone();
+                    // Resets location to last saved location.
+                    let new_location = self.set_location.as_ref().unwrap_or(&self.cached_init_location).clone();
+
+                    if new_location != self.current_location {
+                        self.files.clear();
+                        ctx.link().send_message(Msg::OpenPath(new_location.clone()));
+                    }
+
+                    self.current_location = new_location;
                 }
             }
 
