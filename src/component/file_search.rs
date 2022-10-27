@@ -151,6 +151,8 @@ impl Component for FileSearchComponent {
 
                 if new_loc.is_some() {
                     self.set_location = new_loc;
+
+                    ctx.props().on_event.emit(FileSearchEvent::Submit(self.set_location.clone().unwrap()));
                 }
             }
 
