@@ -64,6 +64,9 @@ pub struct FileSearchComponent {
     files: Vec<FileInfo>,
 
     show_popup: bool,
+
+    // Have we done the initial directory call? Used to Convert "/" -> "C:/"
+    initial_call: bool,
 }
 
 impl Component for FileSearchComponent {
@@ -80,6 +83,8 @@ impl Component for FileSearchComponent {
             set_location: None,
             files: Vec::new(),
             show_popup: false,
+
+            initial_call: false,
         }
     }
 
@@ -89,7 +94,7 @@ impl Component for FileSearchComponent {
                 <input
                     type="text"
                     readonly=true
-                    value={ self.set_location.as_ref().unwrap_or(&ctx.props().init_location).display().to_string() }
+                    value={ self.set_location.as_ref().unwrap_or(&self.cached_init_location).display().to_string() }
                     onclick={ ctx.link().callback(|_| Msg::TogglePopup) }
                 />
 
@@ -149,7 +154,12 @@ impl Component for FileSearchComponent {
                 self.files = resp;
 
                 if let Some(location) = fixed_set_location {
-                    self.set_location = Some(location);
+                    if self.initial_call {
+                        self.current_location = location;
+                    } else {
+                        self.set_location = Some(location);
+                        self.initial_call = true;
+                    }
                 }
             }
 
