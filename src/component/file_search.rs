@@ -1,6 +1,8 @@
-use std::path::PathBuf;
+use std::{path::PathBuf, str::FromStr};
 
 use serde::{Deserialize, Serialize};
+use wasm_bindgen::JsCast;
+use web_sys::HtmlInputElement;
 use yew::prelude::*;
 
 use super::{Popup, PopupType};
@@ -45,6 +47,8 @@ pub enum Msg {
     OpenPath(PathBuf),
     // ( current_location, Files )
     OpenResponse((Option<PathBuf>, Vec<FileInfo>)),
+
+    OnChange(String),
 
     TogglePopup,
     Submit,
@@ -91,12 +95,16 @@ impl Component for FileSearchComponent {
     fn view(&self, ctx: &Context<Self>) -> Html {
         html! {
             <>
-                <input
-                    type="text"
-                    readonly=true
-                    value={ self.set_location.as_ref().unwrap_or(&self.cached_init_location).display().to_string() }
-                    onclick={ ctx.link().callback(|_| Msg::TogglePopup) }
-                />
+                <div class="input-grouping">
+                    <input
+                        type="text"
+                        readonly=false
+                        value={ self.set_location.as_ref().unwrap_or(&self.cached_init_location).display().to_string() }
+                        onchange={ ctx.link().callback(|e: Event| Msg::OnChange(e.target().unwrap().unchecked_into::<HtmlInputElement>().value())) }
+                    />
+
+                    <button onclick={ ctx.link().callback(|_| Msg::TogglePopup) }>{ "Open" }</button>
+                </div>
 
                 {
                     if self.show_popup {
@@ -138,6 +146,14 @@ impl Component for FileSearchComponent {
 
     fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
         match msg {
+            Msg::OnChange(value) => {
+                let new_loc = Some(value.trim().to_string()).filter(|v| !v.is_empty()).and_then(|v| PathBuf::from_str(&v).ok());
+
+                if new_loc.is_some() {
+                    self.set_location = new_loc;
+                }
+            }
+
             Msg::OpenPath(path) => {
                 let scope = ctx.link().clone();
 

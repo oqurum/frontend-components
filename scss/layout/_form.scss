@@ -6,3 +6,18 @@
 		flex-direction: row;
 	}
 }
+
+.input-grouping {
+	display: flex;
+
+	> input {
+		flex-grow: 1;
+
+		+ button {
+			border-top-left-radius: 0;
+			border-bottom-left-radius: 0;
+		}
+	}
+
+	// > button {}
+}
