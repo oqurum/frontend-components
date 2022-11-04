@@ -123,9 +123,8 @@ impl Component for UploadModule {
     }
 
     fn rendered(&mut self, ctx: &Context<Self>, _first_render: bool) {
-        let cont = match self.container_ref.cast::<HtmlElement>() {
-            Some(v) => v,
-            None => return,
+        let Some(cont) = self.container_ref.cast::<HtmlElement>() else {
+            return;
         };
 
         self.disable();
@@ -180,9 +179,8 @@ impl Component for UploadModule {
 
 impl UploadModule {
     fn disable(&mut self) {
-        let cont = match self.container_ref.cast::<HtmlElement>() {
-            Some(v) => v,
-            None => return,
+        let Some(cont) = self.container_ref.cast::<HtmlElement>() else {
+            return;
         };
 
         for (name, func) in self.events_prev_defs.drain(..) {
