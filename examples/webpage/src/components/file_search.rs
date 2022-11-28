@@ -1,9 +1,8 @@
-use std::{path::PathBuf, collections::HashMap};
+use std::{collections::HashMap, path::PathBuf};
 
 use yew::prelude::*;
 
-use common::component::{FileSearchComponent, file_search::FileInfo, FileSearchEvent};
-
+use common::component::{file_search::FileInfo, FileSearchComponent, FileSearchEvent};
 
 #[function_component(FileSearchPage)]
 pub fn _filesearch() -> Html {
@@ -11,10 +10,18 @@ pub fn _filesearch() -> Html {
     let handle2 = handle.clone();
 
     let cached_paths: HashMap<&'static str, Vec<(&'static str, bool)>> = HashMap::from([
-        ("/", vec![ ("Testing", false), ("Another Test", false), ("What is this", false), ("My Files", true) ]),
-        ("/Testing", vec![  ]),
-        ("/Another Test", vec![  ]),
-        ("/What is this", vec![  ]),
+        (
+            "/",
+            vec![
+                ("Testing", false),
+                ("Another Test", false),
+                ("What is this", false),
+                ("My Files", true),
+            ],
+        ),
+        ("/Testing", vec![]),
+        ("/Another Test", vec![]),
+        ("/What is this", vec![]),
     ]);
 
     html! {

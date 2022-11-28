@@ -1,8 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-
 pub use search::*;
-
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct AuthFormLink {
@@ -35,18 +33,19 @@ pub enum Scope {
     ServerRegister,
 }
 
-
-
-
 mod search {
-    use chrono::{DateTime, Utc, NaiveDate};
-    use serde::{Serialize, Deserialize};
-    use crate::{api::{QueryListResponse, WrappingResponse}, util::{serialize_datetime, serialize_datetime_opt, deserialize_datetime_opt, deserialize_datetime, serialize_naivedate_opt, deserialize_naivedate_opt}};
-
+    use crate::{
+        api::{QueryListResponse, WrappingResponse},
+        util::{
+            deserialize_datetime, deserialize_datetime_opt, deserialize_naivedate_opt,
+            serialize_datetime, serialize_datetime_opt, serialize_naivedate_opt,
+        },
+    };
+    use chrono::{DateTime, NaiveDate, Utc};
+    use serde::{Deserialize, Serialize};
 
     pub type PublicSearchResponse = WrappingResponse<PublicSearchType>;
     // TODO: Incorporate Authors, Collections, etc..
-
 
     #[derive(Debug, Serialize, Deserialize, Clone)]
     #[serde(tag = "type", content = "value")]
@@ -57,8 +56,6 @@ mod search {
         AuthorList(QueryListResponse<PublicAuthor>),
         AuthorItem(Option<PublicAuthor>),
     }
-
-
 
     // Public Search
     #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -74,7 +71,6 @@ mod search {
         pub server_id: String,
     }
 
-
     // Author
     #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
     pub struct PublicAuthor {
@@ -82,16 +78,25 @@ mod search {
 
         pub name: String,
         pub description: Option<String>,
-        #[serde(serialize_with = "serialize_naivedate_opt", deserialize_with = "deserialize_naivedate_opt")]
+        #[serde(
+            serialize_with = "serialize_naivedate_opt",
+            deserialize_with = "deserialize_naivedate_opt"
+        )]
         pub birth_date: Option<NaiveDate>,
 
         pub thumb_url: Option<String>,
 
         pub other_names: Vec<String>,
 
-        #[serde(serialize_with = "serialize_datetime", deserialize_with = "deserialize_datetime")]
+        #[serde(
+            serialize_with = "serialize_datetime",
+            deserialize_with = "deserialize_datetime"
+        )]
         pub updated_at: DateTime<Utc>,
-        #[serde(serialize_with = "serialize_datetime", deserialize_with = "deserialize_datetime")]
+        #[serde(
+            serialize_with = "serialize_datetime",
+            deserialize_with = "deserialize_datetime"
+        )]
         pub created_at: DateTime<Utc>,
     }
 
@@ -113,7 +118,10 @@ mod search {
 
         pub is_public: bool,
 
-        #[serde(serialize_with = "serialize_naivedate_opt", deserialize_with = "deserialize_naivedate_opt")]
+        #[serde(
+            serialize_with = "serialize_naivedate_opt",
+            deserialize_with = "deserialize_naivedate_opt"
+        )]
         pub available_at: Option<NaiveDate>,
         pub language: u16,
     }
@@ -141,15 +149,27 @@ mod search {
         pub is_public: bool,
         pub edition_count: usize,
 
-        #[serde(serialize_with = "serialize_naivedate_opt", deserialize_with = "deserialize_naivedate_opt")]
+        #[serde(
+            serialize_with = "serialize_naivedate_opt",
+            deserialize_with = "deserialize_naivedate_opt"
+        )]
         pub available_at: Option<NaiveDate>,
         pub language: u16,
 
-        #[serde(serialize_with = "serialize_datetime", deserialize_with = "deserialize_datetime")]
+        #[serde(
+            serialize_with = "serialize_datetime",
+            deserialize_with = "deserialize_datetime"
+        )]
         pub created_at: DateTime<Utc>,
-        #[serde(serialize_with = "serialize_datetime", deserialize_with = "deserialize_datetime")]
+        #[serde(
+            serialize_with = "serialize_datetime",
+            deserialize_with = "deserialize_datetime"
+        )]
         pub updated_at: DateTime<Utc>,
-        #[serde(serialize_with = "serialize_datetime_opt", deserialize_with = "deserialize_datetime_opt")]
+        #[serde(
+            serialize_with = "serialize_datetime_opt",
+            deserialize_with = "deserialize_datetime_opt"
+        )]
         pub deleted_at: Option<DateTime<Utc>>,
     }
 }

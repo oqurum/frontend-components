@@ -11,7 +11,6 @@ pub fn _carousel() -> Html {
     }
 }
 
-
 fn gene(index: usize) -> Html {
     let book = format!("Book Title {index}");
     let author = format!("Author Title {index}");

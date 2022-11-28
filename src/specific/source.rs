@@ -1,9 +1,8 @@
-use std::{fmt, borrow::Cow, ops::Deref};
+use std::{borrow::Cow, fmt, ops::Deref};
 
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 use crate::error::Error;
-
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(transparent)]
@@ -40,7 +39,6 @@ impl fmt::Display for Agent {
         self.0.fmt(f)
     }
 }
-
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Source {

@@ -1,8 +1,8 @@
+use super::popup::button::{ButtonTitle, ButtonWithPopup};
 use gloo_utils::window;
 use wasm_bindgen::UnwrapThrowExt;
 use web_sys::UrlSearchParams;
 use yew::{prelude::*, virtual_dom::AttrValue};
-use super::popup::button::{ButtonWithPopup, ButtonTitle};
 
 #[derive(Clone, PartialEq)]
 pub struct FilterContainerContext<V: PartialEq + Clone + Copy + Default + 'static> {
@@ -20,8 +20,11 @@ pub struct FilterContainerProps<V: PartialEq + Clone + Copy + Default + 'static>
 }
 
 #[function_component(FilterContainerComponent)]
-pub fn _filter_comp<V: PartialEq + Clone + Copy + Default + 'static>(props: &FilterContainerProps<V>) -> Html {
-    let display_drop_children = use_state_eq(|| Option::<ChildrenWithProps<FilterItemRedirect<V>>>::None);
+pub fn _filter_comp<V: PartialEq + Clone + Copy + Default + 'static>(
+    props: &FilterContainerProps<V>,
+) -> Html {
+    let display_drop_children =
+        use_state_eq(|| Option::<ChildrenWithProps<FilterItemRedirect<V>>>::None);
 
     // TODO: Currently selected.
 
@@ -89,7 +92,9 @@ pub struct FilterItemRedirectProps<V: PartialEq + Clone + Copy + Default + 'stat
 }
 
 #[function_component(FilterItemRedirect)]
-pub fn _filter_item_redirect_comp<V: PartialEq + Clone + Copy + Default + 'static>(props: &FilterItemRedirectProps<V>) -> Html {
+pub fn _filter_item_redirect_comp<V: PartialEq + Clone + Copy + Default + 'static>(
+    props: &FilterItemRedirectProps<V>,
+) -> Html {
     let (query, value) = props.search.clone();
 
     let loc = window().location();
@@ -126,7 +131,9 @@ pub struct FilterItemDropdownProps<V: PartialEq + Clone + Copy + Default + 'stat
 }
 
 #[function_component(FilterItemDropdown)]
-pub fn _filter_item_dropdown_comp<V: PartialEq + Clone + Copy + Default + 'static>(props: &FilterItemDropdownProps<V>) -> Html {
+pub fn _filter_item_dropdown_comp<V: PartialEq + Clone + Copy + Default + 'static>(
+    props: &FilterItemDropdownProps<V>,
+) -> Html {
     let state = use_context::<FilterContainerContext<V>>().unwrap_throw();
 
     let children = props.children.clone();

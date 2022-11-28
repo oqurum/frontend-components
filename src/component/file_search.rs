@@ -5,7 +5,6 @@ use yew::prelude::*;
 
 use super::{Popup, PopupType};
 
-
 #[derive(Clone, Deserialize, Serialize)]
 pub struct FileInfo {
     pub title: String,
@@ -13,19 +12,16 @@ pub struct FileInfo {
     pub is_file: bool,
 }
 
-
 pub struct FileSearchRequest {
     pub path: PathBuf,
     pub update: Callback<Vec<FileInfo>>,
 }
-
 
 pub enum FileSearchEvent {
     Request(FileSearchRequest),
 
     Submit(PathBuf),
 }
-
 
 #[derive(PartialEq, Properties)]
 pub struct FileSearchProps {
@@ -40,7 +36,6 @@ pub struct FileSearchProps {
     pub on_event: Callback<FileSearchEvent>,
 }
 
-
 pub enum Msg {
     OpenPath(PathBuf),
     OpenResponse(Vec<FileInfo>),
@@ -48,7 +43,6 @@ pub enum Msg {
     TogglePopup,
     Submit,
 }
-
 
 pub struct FileSearchComponent {
     // Only used to inform us if we need to update the component.
@@ -71,7 +65,8 @@ impl Component for FileSearchComponent {
     type Properties = FileSearchProps;
 
     fn create(ctx: &Context<Self>) -> Self {
-        ctx.link().send_message(Msg::OpenPath(ctx.props().init_location.clone()));
+        ctx.link()
+            .send_message(Msg::OpenPath(ctx.props().init_location.clone()));
 
         Self {
             cached_init_location: ctx.props().init_location.clone(),
@@ -136,10 +131,12 @@ impl Component for FileSearchComponent {
                 let scope = ctx.link().clone();
 
                 self.current_location = path.clone();
-                ctx.props().on_event.emit(FileSearchEvent::Request(FileSearchRequest {
-                    path,
-                    update: Callback::from(move |v| scope.send_message(Msg::OpenResponse(v))),
-                }));
+                ctx.props()
+                    .on_event
+                    .emit(FileSearchEvent::Request(FileSearchRequest {
+                        path,
+                        update: Callback::from(move |v| scope.send_message(Msg::OpenResponse(v))),
+                    }));
 
                 return false;
             }
@@ -152,7 +149,11 @@ impl Component for FileSearchComponent {
                 self.show_popup = !self.show_popup;
 
                 if self.show_popup {
-                    self.current_location = self.set_location.as_ref().unwrap_or(&self.cached_init_location).clone();
+                    self.current_location = self
+                        .set_location
+                        .as_ref()
+                        .unwrap_or(&self.cached_init_location)
+                        .clone();
                 }
             }
 
@@ -160,7 +161,9 @@ impl Component for FileSearchComponent {
                 self.show_popup = !self.show_popup;
                 self.set_location = Some(self.current_location.clone());
 
-                ctx.props().on_event.emit(FileSearchEvent::Submit(self.current_location.clone()));
+                ctx.props()
+                    .on_event
+                    .emit(FileSearchEvent::Submit(self.current_location.clone()));
             }
         }
 
@@ -172,7 +175,8 @@ impl Component for FileSearchComponent {
             self.set_location = None;
             self.cached_init_location = ctx.props().init_location.clone();
             self.current_location = ctx.props().init_location.clone();
-            ctx.link().send_message(Msg::OpenPath(self.current_location.clone()));
+            ctx.link()
+                .send_message(Msg::OpenPath(self.current_location.clone()));
 
             true
         } else {
@@ -195,4 +199,3 @@ impl FileSearchComponent {
         }
     }
 }
-

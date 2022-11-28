@@ -110,7 +110,6 @@ mod macros {
     }
 }
 
-
 #[macro_use]
 #[cfg(not(feature = "backend"))]
 mod macros {
@@ -191,8 +190,6 @@ mod macros {
         };
     }
 }
-
-
 
 create_single_id!(BookPersonId);
 create_single_id!(BookTagId);

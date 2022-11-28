@@ -3,7 +3,6 @@ use web_sys::HtmlElement;
 use yew::prelude::*;
 use yew_hooks::use_event;
 
-
 #[derive(Properties, PartialEq)]
 pub struct InfiniteScrollProps {
     pub children: Children,
@@ -15,7 +14,6 @@ pub struct InfiniteScrollProps {
 
     pub r#ref: Option<NodeRef>,
 }
-
 
 #[function_component(InfiniteScroll)]
 pub fn _component_fn(props: &InfiniteScrollProps) -> Html {
@@ -54,7 +52,6 @@ pub fn _component_fn(props: &InfiniteScrollProps) -> Html {
         </div>
     }
 }
-
 
 #[derive(Clone)]
 pub struct InfiniteScrollEvent {
