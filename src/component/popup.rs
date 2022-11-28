@@ -30,6 +30,7 @@ impl PopupType {
             Self::FullOverlay if element.class_list().contains("popup") => true,
             // If we didn't click inside of the container
             Self::AtPoint(_, _) if !does_parent_contain_class(&element, "popup-at-point") => true,
+            Self::Display if !does_parent_contain_class(&element, "popup-display") => true,
             // Otherwise just check for a "data-close-popup" attribute
             _ => does_parent_contain_attribute(&element, YEW_CLOSE_POPUP),
         }
