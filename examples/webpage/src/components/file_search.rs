@@ -45,9 +45,9 @@ pub fn _filesearch() -> Html {
                                 })
                                 .collect();
 
-                            req.update.emit(items);
+                            req.update.emit((Some(req.path.clone()), items));
                         } else {
-                            req.update.emit(Vec::new());
+                            req.update.emit((None, Vec::new()));
                         }
                     }
 
