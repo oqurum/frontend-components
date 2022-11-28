@@ -19,6 +19,9 @@ pub enum AppRoute {
 
     #[at("/filesearch")]
     FileSearch,
+
+    #[at("/filter")]
+    Filter,
 }
 
 pub fn switch(routes: &AppRoute) -> Html {
@@ -32,6 +35,8 @@ pub fn switch(routes: &AppRoute) -> Html {
         AppRoute::Carousel => html! { <CarouselPage /> },
 
         AppRoute::FileSearch => html! { <FileSearchPage /> },
+
+        AppRoute::Filter => html! { <FilterPage /> },
     }
 }
 
@@ -43,6 +48,7 @@ pub fn home() -> Html {
             <li><Link<AppRoute> to={ AppRoute::ExpandableContainer }>{ "Expandable Container" }</Link<AppRoute>></li>
             <li><Link<AppRoute> to={ AppRoute::Carousel }>{ "Carousel" }</Link<AppRoute>></li>
             <li><Link<AppRoute> to={ AppRoute::FileSearch }>{ "File Search" }</Link<AppRoute>></li>
+            <li><Link<AppRoute> to={ AppRoute::Filter }>{ "Filter" }</Link<AppRoute>></li>
         </ul>
     }
 }

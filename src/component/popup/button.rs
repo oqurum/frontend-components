@@ -1,4 +1,4 @@
-use yew::prelude::*;
+use yew::{prelude::*, virtual_dom::AttrValue};
 
 use super::{Popup, PopupType};
 
@@ -11,10 +11,27 @@ use super::{Popup, PopupType};
 //     Right,
 // }
 
+#[derive(PartialEq, Eq)]
+pub enum ButtonTitle {
+    Text(AttrValue),
+    Icon(&'static str),
+}
+
+impl Default for ButtonTitle {
+    fn default() -> Self {
+        Self::Icon("more_horiz")
+    }
+}
+
 #[derive(Properties, PartialEq)]
 pub struct ButtonProperty {
     #[prop_or_default]
     pub class: Classes,
+
+    #[prop_or_default]
+    pub title: ButtonTitle,
+
+    pub on_close_popup: Option<Callback<()>>,
 
     pub children: Children,
 }
@@ -36,14 +53,24 @@ impl Component for ButtonWithPopup {
         Self { is_open: false }
     }
 
-    fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {
+    fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
         match msg {
             ButtonMsg::TogglePopup => {
                 self.is_open = !self.is_open;
+
+                if !self.is_open {
+                    if let Some(cb) = ctx.props().on_close_popup.as_ref() {
+                        cb.emit(());
+                    }
+                }
             }
 
             ButtonMsg::ClosePopup => {
                 self.is_open = false;
+
+                if let Some(cb) = ctx.props().on_close_popup.as_ref() {
+                    cb.emit(());
+                }
             }
         }
 
@@ -53,15 +80,31 @@ impl Component for ButtonWithPopup {
     fn view(&self, ctx: &Context<Self>) -> Html {
         html! {
             <div class={ classes!("button-popup-group", ctx.props().class.clone()) }>
-                <span
-                    class="button material-icons"
-                    title="More Options"
-                    onclick={ ctx.link().callback(|e: MouseEvent| {
-                        e.prevent_default();
+                {
+                    match &ctx.props().title {
+                        ButtonTitle::Text(text) => html! {
+                            <button class="slim" title="More Options"
+                                onclick={ ctx.link().callback(|e: MouseEvent| {
+                                    e.prevent_default();
+                                    e.stop_propagation();
 
-                        ButtonMsg::TogglePopup
-                    }) }
-                >{ "more_horiz" }</span>
+                                    ButtonMsg::TogglePopup
+                                }) }
+                            >{ text.clone() }</button>
+                        },
+
+                        &ButtonTitle::Icon(text) => html! {
+                            <span class="material-icons" title="More Options"
+                                onclick={ ctx.link().callback(|e: MouseEvent| {
+                                    e.prevent_default();
+                                    e.stop_propagation();
+
+                                    ButtonMsg::TogglePopup
+                                }) }
+                            >{ text }</span>
+                        },
+                    }
+                }
 
                 {
                     if self.is_open {
