@@ -1,41 +1,57 @@
+use std::{borrow::Cow, rc::Rc};
+
 use super::popup::button::{ButtonTitle, ButtonWithPopup};
 use gloo_utils::window;
 use wasm_bindgen::UnwrapThrowExt;
 use web_sys::UrlSearchParams;
 use yew::{prelude::*, virtual_dom::AttrValue};
 
+pub trait FilterItemType {
+    fn title(self) -> Cow<'static, str>;
+}
+
 #[derive(Clone, PartialEq)]
-pub struct FilterContainerContext<V: PartialEq + Clone + Copy + Default + 'static> {
+pub struct FilterContainerContext<V: PartialEq + Clone + Copy + Default + FilterItemType + 'static>
+{
     on_click_dropdown: Callback<ChildrenWithProps<FilterItemRedirect<V>>>,
+
+    overwrite_query: bool,
 }
 
 #[derive(PartialEq, Properties)]
-pub struct FilterContainerProps<V: PartialEq + Clone + Copy + Default + 'static> {
+pub struct FilterContainerProps<V: PartialEq + Clone + Copy + Default + FilterItemType + 'static> {
     pub children: Children,
 
     pub on_click: Callback<V>,
 
-    #[prop_or_default]
     pub value: V,
+
+    pub overwrite_query: bool,
 }
 
 #[function_component(FilterContainerComponent)]
-pub fn _filter_comp<V: PartialEq + Clone + Copy + Default + 'static>(
+pub fn _filter_comp<V: PartialEq + Clone + Copy + Default + FilterItemType + 'static>(
     props: &FilterContainerProps<V>,
 ) -> Html {
+    // keeps track of what you have selected instead of relying on property.
+    let inner_selection = {
+        let selected = props.value;
+        use_state_eq(move || selected)
+    };
+
     let display_drop_children =
         use_state_eq(|| Option::<ChildrenWithProps<FilterItemRedirect<V>>>::None);
 
-    // TODO: Currently selected.
-
     let context = {
-        let setter = display_drop_children.setter();
+        let setter_dropdown = display_drop_children.setter();
 
-        FilterContainerContext {
+        Rc::new(FilterContainerContext {
+            overwrite_query: props.overwrite_query,
+
             on_click_dropdown: Callback::from(move |items| {
-                setter.set(Some(items));
+                setter_dropdown.set(Some(items));
             }),
-        }
+        })
     };
 
     let on_close_popup = {
@@ -53,10 +69,10 @@ pub fn _filter_comp<V: PartialEq + Clone + Copy + Default + 'static>(
 
     html! {
         <ButtonWithPopup
-            title={ ButtonTitle::Text(AttrValue::Static("Asdf")) }
+            title={ ButtonTitle::Text(AttrValue::from(inner_selection.title())) }
             {on_close_popup}
         >
-            <ContextProvider<FilterContainerContext<V>> {context}>
+            <ContextProvider<Rc<FilterContainerContext<V>>> {context}>
                 {
                     if let Some(children) = display_drop_children.as_ref() {
                         html! {
@@ -72,7 +88,7 @@ pub fn _filter_comp<V: PartialEq + Clone + Copy + Default + 'static>(
                         html! {{ for props.children.iter() }}
                     }
                 }
-            </ContextProvider<FilterContainerContext<V>>>
+            </ContextProvider<Rc<FilterContainerContext<V>>>>
         </ButtonWithPopup>
     }
 }
@@ -82,9 +98,9 @@ pub fn _filter_comp<V: PartialEq + Clone + Copy + Default + 'static>(
 // ==========================
 
 #[derive(PartialEq, Eq, Clone, Properties)]
-pub struct FilterItemRedirectProps<V: PartialEq + Clone + Copy + Default + 'static> {
-    pub title: String,
-
+pub struct FilterItemRedirectProps<V: PartialEq + Clone + Copy + Default + FilterItemType + 'static>
+{
+    // TODO: Improve. Should be able to have multiple queries
     /// Location Search (?query=value)
     pub search: (AttrValue, AttrValue),
 
@@ -92,18 +108,22 @@ pub struct FilterItemRedirectProps<V: PartialEq + Clone + Copy + Default + 'stat
 }
 
 #[function_component(FilterItemRedirect)]
-pub fn _filter_item_redirect_comp<V: PartialEq + Clone + Copy + Default + 'static>(
+pub fn _filter_item_redirect_comp<
+    V: PartialEq + Clone + Copy + Default + FilterItemType + 'static,
+>(
     props: &FilterItemRedirectProps<V>,
 ) -> Html {
+    let state = use_context::<Rc<FilterContainerContext<V>>>().unwrap_throw();
+
     let (query, value) = props.search.clone();
 
     let loc = window().location();
 
     let search = loc.search().unwrap_throw();
-    let params = if !search.is_empty() {
-        UrlSearchParams::new_with_str(&search[1..]).unwrap_throw()
-    } else {
+    let params = if state.overwrite_query || search.is_empty() {
         UrlSearchParams::new().unwrap_throw()
+    } else {
+        UrlSearchParams::new_with_str(&search[1..]).unwrap_throw()
     };
 
     params.set(&query, &value);
@@ -114,7 +134,7 @@ pub fn _filter_item_redirect_comp<V: PartialEq + Clone + Copy + Default + 'stati
                 "{}?{}",
                 loc.pathname().unwrap_throw(),
                 params.to_string().as_string().unwrap_throw()
-            ) }>{ props.title.clone() }</a>
+            ) }>{ props.type_of.title() }</a>
         </div>
     }
 }
@@ -124,17 +144,20 @@ pub fn _filter_item_redirect_comp<V: PartialEq + Clone + Copy + Default + 'stati
 // ==========================
 
 #[derive(PartialEq, Clone, Properties)]
-pub struct FilterItemDropdownProps<V: PartialEq + Clone + Copy + Default + 'static> {
+pub struct FilterItemDropdownProps<V: PartialEq + Clone + Copy + Default + FilterItemType + 'static>
+{
     pub children: ChildrenWithProps<FilterItemRedirect<V>>,
 
     pub title: String,
 }
 
 #[function_component(FilterItemDropdown)]
-pub fn _filter_item_dropdown_comp<V: PartialEq + Clone + Copy + Default + 'static>(
+pub fn _filter_item_dropdown_comp<
+    V: PartialEq + Clone + Copy + Default + FilterItemType + 'static,
+>(
     props: &FilterItemDropdownProps<V>,
 ) -> Html {
-    let state = use_context::<FilterContainerContext<V>>().unwrap_throw();
+    let state = use_context::<Rc<FilterContainerContext<V>>>().unwrap_throw();
 
     let children = props.children.clone();
 
