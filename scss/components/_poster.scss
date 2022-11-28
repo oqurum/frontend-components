@@ -10,6 +10,9 @@
 	border: var(--border-size-1) solid transparent;
 	transition: border 0.25s;
 
+	margin: 0 0 2px 0;
+	padding: 0;
+
 	&.large {
 		width: 248px;
 		height: 372px;

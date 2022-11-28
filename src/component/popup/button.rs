@@ -2,6 +2,8 @@ use yew::{prelude::*, virtual_dom::AttrValue};
 
 use super::{Popup, PopupType};
 
+// TODO: Update on Resize
+
 // TODO: Implement.
 // #[derive(Clone, Copy)]
 // pub enum ButtonPopupPosition {

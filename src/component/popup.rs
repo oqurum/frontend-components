@@ -1,8 +1,8 @@
 use std::{cell::Cell, rc::Rc};
 
 use gloo_utils::body;
-use wasm_bindgen::{prelude::Closure, JsCast};
-use web_sys::{Element, MouseEvent};
+use wasm_bindgen::{prelude::Closure, JsCast, UnwrapThrowExt};
+use web_sys::{Element, HtmlElement, MouseEvent};
 use yew::prelude::*;
 
 use crate::util::{does_parent_contain_attribute, does_parent_contain_class};
@@ -24,10 +24,16 @@ pub enum PopupType {
 }
 
 impl PopupType {
-    pub fn should_exit(self, element: Element) -> bool {
+    pub fn should_exit(self, node_ref: &NodeRef, element: Element) -> bool {
+        let container = node_ref.cast::<HtmlElement>().unwrap_throw();
+
         match self {
-            // If we clicked .popup
-            Self::FullOverlay if element.class_list().contains("popup") => true,
+            // Popup contains element AND If we clicked .popup
+            Self::FullOverlay
+                if container.contains(Some(&element)) && element.class_list().contains("popup") =>
+            {
+                true
+            }
             // If we didn't click inside of the container
             Self::AtPoint(_, _) if !does_parent_contain_class(&element, "popup-at-point") => true,
             Self::Display if !does_parent_contain_class(&element, "popup-display") => true,
@@ -111,12 +117,13 @@ impl Component for Popup {
                 body().remove_event_listener_with_callback("click", func.as_ref().unchecked_ref());
         }
 
+        let container = self.node_ref.clone();
         let viewing = ctx.props().type_of;
         let exit_fn = ctx.props().on_close.clone();
 
         let on_click = Closure::wrap(Box::new(move |event: MouseEvent| {
             if let Some(target) = event.target() {
-                if viewing.should_exit(target.unchecked_into()) {
+                if viewing.should_exit(&container, target.unchecked_into()) {
                     exit_fn.emit(());
                 }
             }
@@ -139,6 +146,7 @@ impl Component for Popup {
 pub struct PopupCloseProps {
     pub children: Children,
 
+    // TODO: Make transparent. Remove class, title
     #[prop_or_default]
     pub class: Classes,
     pub title: Option<String>,

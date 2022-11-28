@@ -93,9 +93,8 @@ pub fn parse_isbn_10(value: &str) -> Option<String> {
     }
 
     for dig_str in parse.take(9) {
-        let dig = match dig_str.parse::<usize>() {
-            Ok(v) => v,
-            Err(_) => return None,
+        let Ok(dig) = dig_str.parse::<usize>() else {
+            return None;
         };
 
         compiled.push_str(dig_str);
@@ -119,9 +118,8 @@ pub fn parse_isbn_13(value: &str) -> Option<String> {
         .take(13)
         .enumerate()
     {
-        let dig = match dig_str.parse::<usize>() {
-            Ok(v) => v,
-            Err(_) => return None,
+        let Ok(dig) = dig_str.parse::<usize>() else {
+            return None;
         };
 
         compiled.push_str(dig_str);
@@ -144,9 +142,8 @@ pub fn isbn_10_to_13(value: &str) -> Option<String> {
     for (i, dig_str) in iter.enumerate() {
         println!("[{}]: {}", i, dig_str);
 
-        let dig = match dig_str.parse::<usize>() {
-            Ok(v) => v,
-            Err(_) => return None,
+        let Ok(dig) = dig_str.parse::<usize>() else {
+            return None;
         };
 
         compiled.push_str(dig_str);

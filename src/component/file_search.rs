@@ -1,6 +1,8 @@
-use std::path::PathBuf;
+use std::{path::PathBuf, str::FromStr};
 
 use serde::{Deserialize, Serialize};
+use wasm_bindgen::{JsCast, UnwrapThrowExt};
+use web_sys::HtmlInputElement;
 use yew::prelude::*;
 
 use super::{Popup, PopupType};
@@ -14,7 +16,7 @@ pub struct FileInfo {
 
 pub struct FileSearchRequest {
     pub path: PathBuf,
-    pub update: Callback<Vec<FileInfo>>,
+    pub update: Callback<(Option<PathBuf>, Vec<FileInfo>)>,
 }
 
 pub enum FileSearchEvent {
@@ -38,7 +40,10 @@ pub struct FileSearchProps {
 
 pub enum Msg {
     OpenPath(PathBuf),
-    OpenResponse(Vec<FileInfo>),
+    // ( current_location, Files )
+    OpenResponse((Option<PathBuf>, Vec<FileInfo>)),
+
+    OnChange(String),
 
     TogglePopup,
     Submit,
@@ -57,6 +62,9 @@ pub struct FileSearchComponent {
     files: Vec<FileInfo>,
 
     show_popup: bool,
+
+    // Have we done the initial directory call? Used to Convert "/" -> "C:/"
+    initial_call: bool,
 }
 
 impl Component for FileSearchComponent {
@@ -74,18 +82,24 @@ impl Component for FileSearchComponent {
             set_location: None,
             files: Vec::new(),
             show_popup: false,
+
+            initial_call: false,
         }
     }
 
     fn view(&self, ctx: &Context<Self>) -> Html {
         html! {
             <>
-                <input
-                    type="text"
-                    readonly=true
-                    value={ self.set_location.as_ref().unwrap_or(&ctx.props().init_location).display().to_string() }
-                    onclick={ ctx.link().callback(|_| Msg::TogglePopup) }
-                />
+                <div class="input-grouping">
+                    <input
+                        type="text"
+                        readonly=false
+                        value={ self.set_location.as_ref().unwrap_or(&self.cached_init_location).display().to_string() }
+                        onchange={ ctx.link().callback(|e: Event| Msg::OnChange(e.target().unwrap_throw().unchecked_into::<HtmlInputElement>().value())) }
+                    />
+
+                    <button onclick={ ctx.link().callback(|_| Msg::TogglePopup) }>{ "Open" }</button>
+                </div>
 
                 {
                     if self.show_popup {
@@ -127,6 +141,20 @@ impl Component for FileSearchComponent {
 
     fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
         match msg {
+            Msg::OnChange(value) => {
+                let new_loc = Some(value.trim().to_string())
+                    .filter(|v| !v.is_empty())
+                    .and_then(|v| PathBuf::from_str(&v).ok());
+
+                if new_loc.is_some() {
+                    self.set_location = new_loc;
+
+                    ctx.props().on_event.emit(FileSearchEvent::Submit(
+                        self.set_location.clone().unwrap_throw(),
+                    ));
+                }
+            }
+
             Msg::OpenPath(path) => {
                 let scope = ctx.link().clone();
 
@@ -141,19 +169,36 @@ impl Component for FileSearchComponent {
                 return false;
             }
 
-            Msg::OpenResponse(resp) => {
+            Msg::OpenResponse((fixed_set_location, resp)) => {
                 self.files = resp;
+
+                if let Some(location) = fixed_set_location {
+                    if self.initial_call {
+                        self.current_location = location;
+                    } else {
+                        self.set_location = Some(location);
+                        self.initial_call = true;
+                    }
+                }
             }
 
             Msg::TogglePopup => {
                 self.show_popup = !self.show_popup;
 
                 if self.show_popup {
-                    self.current_location = self
+                    // Resets location to last saved location.
+                    let new_location = self
                         .set_location
                         .as_ref()
                         .unwrap_or(&self.cached_init_location)
                         .clone();
+
+                    if new_location != self.current_location {
+                        self.files.clear();
+                        ctx.link().send_message(Msg::OpenPath(new_location.clone()));
+                    }
+
+                    self.current_location = new_location;
                 }
             }
 
