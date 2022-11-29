@@ -109,6 +109,7 @@ impl Component for Popup {
 
     fn rendered(&mut self, ctx: &Context<Self>, _first_render: bool) {
         // TODO: On render check dimensions of and adjust "AtPoint"
+        // TODO: Prevent parent onclick from calling this onclick from the same tick.
 
         // FIX: rendered would be called again if we clicked an element containing another onclick event.
         // Resulted in our previous event being overwritten but not removed from the listener.
@@ -123,7 +124,10 @@ impl Component for Popup {
 
         let on_click = Closure::wrap(Box::new(move |event: MouseEvent| {
             if let Some(target) = event.target() {
+                log::trace!("Check For Exit");
+
                 if viewing.should_exit(&container, target.unchecked_into()) {
+                    log::trace!("Emit Exit");
                     exit_fn.emit(());
                 }
             }
