@@ -10,6 +10,9 @@
 
 
 .label {
+	width: fit-content;
+	height: fit-content;
+
 	padding: 3px;
 	border-radius: var(--radius-2);
 	background-color: var(--surface-1);
