@@ -1,26 +1,18 @@
 .external-book-search-popup {
-	//
+	overflow-y: auto;
 
-	> .external-book-search-container {
+	.book-search-items {
 		overflow-y: auto;
+		background-color: var(--surface-1);
+		margin-right: 10px;
 
-		> h2 {
+		> .book-search-item {
+			display: flex;
 			margin-bottom: 0.5em;
-		}
+			cursor: pointer;
 
-		> .book-search-items {
-			overflow-y: auto;
-			background-color: var(--surface-1);
-			margin-right: 10px;
-
-			> .book-search-item {
-				display: flex;
-				margin-bottom: 0.5em;
-				cursor: pointer;
-
-				> img {
-					height: 16em;
-				}
+			> img {
+				height: 16em;
 			}
 		}
 	}

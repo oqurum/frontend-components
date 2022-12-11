@@ -1,81 +1,40 @@
 
+nav {
+	// Dropdown
 
-.navbar-module {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	background: var(--surface-1);
-	padding: 0px 10px;
-	height: 3em;
-	min-height: 3em;
+	.search-dropdown {
+		position: absolute;
+		background-color: var(--surface-3);
+		width: 100%;
+		padding: 6px;
+		z-index: 100;
+		overflow-y: auto;
+		max-height: 28em; // TODO: Auto height.
+		max-width: 35em;
 
-	> .left-content {
-		display: flex;
-		flex-direction: row;
-	}
+		top: 100%;
 
-
-	> .center-content {
-		position: relative;
-		min-width: 40%;
-
-		> .search-bar {
+		.search-item {
 			display: flex;
+			flex-direction: row;
+			height: 7em;
+			margin: 2px 0;
 
-			input {
+			&:hover {
+				background-color: var(--surface-2);
+			}
+
+			.info {
 				flex-grow: 1;
-			}
-		}
+				overflow: hidden;
+				padding-left: 10px;
 
-		// Dropdown
-
-		> .search-dropdown {
-			position: absolute;
-			background-color: var(--surface-3);
-			width: 100%;
-			padding: 6px;
-			z-index: 100;
-			overflow-y: auto;
-			max-height: 28em; // TODO: Auto height.
-			margin-top: 8px;
-
-			.search-item {
-				display: flex;
-				flex-direction: row;
-				height: 7em;
-				margin: 2px 0;
-
-				&:hover {
-					background-color: var(--surface-2);
-				}
-
-				.info {
-					flex-grow: 1;
+				.book-name {
 					overflow: hidden;
-					padding-left: 10px;
-
-					.book-name {
-						overflow: hidden;
-						white-space: nowrap;
-						text-overflow: ellipsis;
-					}
+					white-space: nowrap;
+					text-overflow: ellipsis;
 				}
 			}
 		}
-	}
-
-
-	> .right-content {
-		display: flex;
-		flex-direction: row;
-		justify-content: flex-end;
-	}
-
-	> * > a {
-		padding: 10px 20px;
-		text-decoration: none;
-		color: var(--text-1);
-		text-transform: uppercase;
-		user-select: none;
 	}
 }

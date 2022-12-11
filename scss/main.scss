@@ -34,35 +34,34 @@
 :root {
 	--ratio-portrait: 0.668;
 
-	--brand: var(--orange-3);
-	--brand-1: var(--orange-4);
-	--brand-2: var(--orange-2);
-	--text-1: var(--gray-1);
-	--text-2: var(--gray-3);
-	--surface-1: var(--gray-9);
-	--surface-2: var(--gray-8);
-	--surface-3: var(--gray-7);
-	--surface-4: var(--gray-6);
+	--brand: #ffc078;
+	--brand-1: #ffa94d;
+	--brand-2: #ffd8a8;
+	// --text-1: var(--gray-1);
+	// --text-2: var(--gray-3);
+	--surface-1: #212529;
+	--surface-2: #343a40;
+	--surface-3: #495057;
+	--surface-4: #868e96;
 	--text-size-content-4: 80ch;
 
 	height: 100%;
 	width: 100%;
 
-	background-color: var(--surface-2);
-	color: var(--text-1);
-	accent-color: var(--brand);
+	// color: var(--text-1);
+	// accent-color: var(--brand);
 }
 
 body {
-	display: flex;
-	flex-direction: column;
 	height: 100%;
 	width: 100%;
 	margin: 0;
+
+	background-color: var(--surface-2);
 }
 
 .tab-bar {
-	height: 3em;
+	height: 2em;
 	display: flex;
 	flex-direction: row;
 
@@ -109,8 +108,6 @@ body {
 
 
 .outer-view-container {
-	display: flex;
-	flex-direction: row;
 	flex-grow: 1;
 	overflow: hidden;
 }
@@ -121,4 +118,9 @@ body {
 	padding: 0.5em;
 	flex-grow: 1;
 	overflow-y: auto;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
 }

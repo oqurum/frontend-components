@@ -114,9 +114,15 @@ impl Component for ButtonWithPopup {
                             <Popup
                                 type_of={ PopupType::Display }
                                 on_close={ ctx.link().callback(|_| ButtonMsg::ClosePopup) }
-                                classes="menu-list"
+                                classes="dropdown-menu dropdown-menu-dark show"
                             >
-                                { for ctx.props().children.iter() }
+                                {
+                                    for ctx.props().children
+                                        .iter()
+                                        .map(|v| html! {
+                                            <li>{ v }</li>
+                                        })
+                                }
                             </Popup>
                         }
                     } else {

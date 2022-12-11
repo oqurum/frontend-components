@@ -30,7 +30,7 @@ impl PopupType {
         match self {
             // Popup contains element AND If we clicked .popup
             Self::FullOverlay
-                if container.contains(Some(&element)) && element.class_list().contains("popup") =>
+                if container.contains(Some(&element)) && element.class_list().contains("modal") =>
             {
                 true
             }
@@ -75,9 +75,11 @@ impl Component for Popup {
         match ctx.props().type_of {
             PopupType::FullOverlay => {
                 let display = html! {
-                    <div ref={ self.node_ref.clone() } class="popup">
-                        <div class={ classes!("popup-container", ctx.props().classes.clone()) }>
-                            { for ctx.props().children.iter() }
+                    <div ref={ self.node_ref.clone() } class="modal fade show" tabindex="-1" style="display: block;">
+                        <div class={ classes!("modal-dialog", "modal-dialog-centered", ctx.props().classes.clone()) }>
+                            <div class="modal-content text-bg-dark">
+                                { for ctx.props().children.iter() }
+                            </div>
                         </div>
                     </div>
                 };
