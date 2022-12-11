@@ -7,14 +7,14 @@ use crate::routes::{switch, AppRoute};
 pub fn app() -> Html {
     html! {
         <BrowserRouter>
-            <div class="navbar-module">
-                <div class="left-content">
-                    <Link<AppRoute> to={ AppRoute::Home }>{ "Home" }</Link<AppRoute>>
+            <nav class="navbar navbar-expand-lg text-bg-dark">
+                <div class="container-fluid">
+                    <ul class="navbar-nav">
+                        <li class="nav-item"><Link<AppRoute> to={ AppRoute::Home }>{ "Home" }</Link<AppRoute>></li>
+                    </ul>
                 </div>
-                <div class="center-content"></div>
-                <div class="right-content"></div>
-            </div>
-            <div class="outer-view-container">
+            </nav>
+            <div class="outer-view-container d-flex flex-column">
                 <div class="view-container">
                     <Switch<AppRoute> render={ Switch::render(switch) } />
                 </div>

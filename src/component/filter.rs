@@ -77,7 +77,7 @@ pub fn _filter_comp<V: PartialEq + Clone + Copy + Default + FilterItemType + 'st
                     if let Some(children) = display_drop_children.as_ref() {
                         html! {
                             <>
-                                <div class="menu-item" onclick={on_back}>
+                                <div class="dropdown-item" onclick={on_back}>
                                     { "Back" }
                                 </div>
 
@@ -129,7 +129,7 @@ pub fn _filter_item_redirect_comp<
     params.set(&query, &value);
 
     html! {
-        <div class="menu-item">
+        <div class="dropdown-item">
             <a href={ format!(
                 "{}?{}",
                 loc.pathname().unwrap_throw(),
@@ -162,7 +162,7 @@ pub fn _filter_item_dropdown_comp<
     let children = props.children.clone();
 
     html! {
-        <div class="menu-item"
+        <div class="dropdown-item"
             onclick={ Callback::from(move |e: MouseEvent| {
                 e.stop_propagation();
 

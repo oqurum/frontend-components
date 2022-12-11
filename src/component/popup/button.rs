@@ -85,7 +85,7 @@ impl Component for ButtonWithPopup {
                 {
                     match &ctx.props().title {
                         ButtonTitle::Text(text) => html! {
-                            <button class="slim" title="More Options"
+                            <button class="btn btn-secondary btn-sm" title="More Options"
                                 onclick={ ctx.link().callback(|e: MouseEvent| {
                                     e.prevent_default();
                                     e.stop_propagation();

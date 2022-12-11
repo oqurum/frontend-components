@@ -1,12 +1,11 @@
 .file-search {
-    > .location {
-        margin-bottom: 10px;
-    }
+    // .location {}
 
-    > .files {
+    .files {
         display: flex;
         flex-direction: column;
         overflow-y: auto;
+        width: 100%;
 
         > .file {
             padding: 5px;

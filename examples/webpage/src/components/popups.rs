@@ -31,21 +31,26 @@ pub fn _popups_cont() -> Html {
             <br />
 
             <ButtonWithPopup title={ ButtonTitle::Text(AttrValue::Static("Button Popup List")) }>
-                <div class="menu-item">{ "First Item" }</div>
-                <div class="menu-item">{ "Second Item" }</div>
-                <div class="menu-item">{ "Third Item" }</div>
+                <div class="dropdown-item">{ "First Item" }</div>
+                <div class="dropdown-item">{ "Second Item" }</div>
+                <div class="dropdown-item">{ "Third Item" }</div>
             </ButtonWithPopup>
 
             <h3>{ "Popup Overlay" }</h3>
             <br />
 
-            <button onclick={ popup_overlay_cb }>{ "Show Overlay" }</button>
+            <button class="btn btn-secondary" onclick={ popup_overlay_cb }>{ "Show Overlay" }</button>
 
             {
                 if *showing_popup_overlay {
                     html! {
                         <Popup type_of={ PopupType::FullOverlay } on_close={ Callback::from(move |_| showing_popup_overlay.toggle()) }>
-                            { "Overlay" }
+                            <div class="modal-header">
+                                <h5 class="modal-title">{ "Overlay" }</h5>
+                            </div>
+                            <div class="modal-body">
+                                { "Body" }
+                            </div>
                         </Popup>
                     }
                 } else {
@@ -56,7 +61,7 @@ pub fn _popups_cont() -> Html {
             <h3>{ "Popup At Point" }</h3>
             <br />
 
-            <button onclick={ popup_at_point_cb }>{ "Show Overlay" }</button>
+            <button class="btn btn-secondary" onclick={ popup_at_point_cb }>{ "Show Overlay" }</button>
 
             {
                 if *showing_at_point_overlay {

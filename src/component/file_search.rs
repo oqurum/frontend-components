@@ -90,15 +90,16 @@ impl Component for FileSearchComponent {
     fn view(&self, ctx: &Context<Self>) -> Html {
         html! {
             <>
-                <div class="input-grouping">
+                <div class="input-group">
                     <input
                         type="text"
                         readonly=false
+                        class="form-control"
                         value={ self.set_location.as_ref().unwrap_or(&self.cached_init_location).display().to_string() }
                         onchange={ ctx.link().callback(|e: Event| Msg::OnChange(e.target().unwrap_throw().unchecked_into::<HtmlInputElement>().value())) }
                     />
 
-                    <button onclick={ ctx.link().callback(|_| Msg::TogglePopup) }>{ "Open" }</button>
+                    <button class="btn btn-secondary" onclick={ ctx.link().callback(|_| Msg::TogglePopup) }>{ "Open" }</button>
                 </div>
 
                 {
@@ -109,25 +110,29 @@ impl Component for FileSearchComponent {
                                 type_of={ PopupType::FullOverlay }
                                 on_close={ ctx.link().callback(|_| Msg::TogglePopup) }
                             >
-                                <div class="location">{ self.current_location.display() }</div>
-                                <div class="files">
-                                    {
-                                        if self.current_location.parent().is_some() {
-                                            let mut prev_path = self.current_location.clone();
-                                            prev_path.pop();
+                                <div class="modal-header">
+                                    <div class="location">{ self.current_location.display() }</div>
+                                </div>
+                                <div class="modal-header">
+                                    <div class="files">
+                                        {
+                                            if self.current_location.parent().is_some() {
+                                                let mut prev_path = self.current_location.clone();
+                                                prev_path.pop();
 
-                                            Self::create_button(FileInfo { title: String::from(".. [Back]"), path: prev_path, is_file: false }, ctx)
-                                        } else {
-                                            html! {}
+                                                Self::create_button(FileInfo { title: String::from(".. [Back]"), path: prev_path, is_file: false }, ctx)
+                                            } else {
+                                                html! {}
+                                            }
                                         }
-                                    }
 
-                                    { for self.files.iter().cloned().map(|info| Self::create_button(info, ctx)) }
+                                        { for self.files.iter().cloned().map(|info| Self::create_button(info, ctx)) }
+                                    </div>
                                 </div>
 
-                                <div class="footer">
-                                    <button class="red" onclick={ ctx.link().callback(|_| Msg::TogglePopup) }>{ "Cancel" }</button>
-                                    <button class="green" onclick={ ctx.link().callback(|_| Msg::Submit) }>{ "Submit" }</button>
+                                <div class="modal-footer">
+                                    <button class="btn btn-secondary" onclick={ ctx.link().callback(|_| Msg::TogglePopup) }>{ "Cancel" }</button>
+                                    <button class="btn btn-primary" onclick={ ctx.link().callback(|_| Msg::Submit) }>{ "Submit" }</button>
                                 </div>
                             </Popup>
                         }
