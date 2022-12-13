@@ -14,7 +14,7 @@
 
 	.comparison-row > .row-grow {
 		cursor: pointer;
-		border-radius: var(--radius-2);
+		border-radius: var(--bs-border-radius);
 
 		&.selected > .label {
 			border-left: 2px var(--brand) solid;
