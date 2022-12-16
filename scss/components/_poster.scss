@@ -5,6 +5,7 @@
 	position: relative;
 	overflow: hidden;
 	width: 165px;
+	min-width: 165px;
 	height: 247px;
 	border-radius: var(--bs-border-radius);
 	border: var(--border-size-1) solid transparent;
@@ -12,6 +13,12 @@
 
 	margin: 0 0 2px 0;
 	padding: 0;
+
+	&.small {
+		width: 82px;
+		min-width: 82px;
+		height: 123px;
+	}
 
 	&.large {
 		width: 248px;
