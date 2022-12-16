@@ -51,7 +51,7 @@ impl Component for PopupComparison {
         }
     }
 
-    fn changed(&mut self, ctx: &Context<Self>) -> bool {
+    fn changed(&mut self, ctx: &Context<Self>, _prev: &Property) -> bool {
         self.selected = ctx
             .props()
             .compare

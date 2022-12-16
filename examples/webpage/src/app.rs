@@ -16,7 +16,7 @@ pub fn app() -> Html {
             </nav>
             <div class="outer-view-container d-flex flex-column">
                 <div class="view-container">
-                    <Switch<AppRoute> render={ Switch::render(switch) } />
+                    <Switch<AppRoute> render={ switch } />
                 </div>
             </div>
         </BrowserRouter>

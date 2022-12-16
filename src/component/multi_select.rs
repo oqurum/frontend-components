@@ -113,9 +113,9 @@ impl<Ident: Clone + PartialEq + 'static> Component for MultiSelectModule<Ident> 
                         .get_selected_child_id(ctx)
                         .expect_throw("Couldn't get child value");
 
-                    return self.update(ctx, MultiSelectMessage::OnSelectItem(value));
+                    return Component::update(self, ctx, MultiSelectMessage::OnSelectItem(value));
                 } else {
-                    return self.update(ctx, MultiSelectMessage::OnCreate);
+                    return Component::update(self, ctx, MultiSelectMessage::OnCreate);
                 }
             }
 
@@ -149,9 +149,9 @@ impl<Ident: Clone + PartialEq + 'static> Component for MultiSelectModule<Ident> 
 
             MultiSelectMessage::OnKeyUp(event) => {
                 if event.key() == "Enter" {
-                    return self.update(ctx, MultiSelectMessage::OnPressEnter);
+                    return Component::update(self, ctx, MultiSelectMessage::OnPressEnter);
                 } else {
-                    return self.update(ctx, MultiSelectMessage::OnInputChange(event));
+                    return Component::update(self, ctx, MultiSelectMessage::OnInputChange(event));
                 }
             }
 
@@ -241,7 +241,7 @@ impl<Ident: Clone + PartialEq + 'static> Component for MultiSelectModule<Ident> 
         }
     }
 
-    fn changed(&mut self, _ctx: &Context<Self>) -> bool {
+    fn changed(&mut self, _ctx: &Context<Self>, _prev: &MultiSelectProperty<Ident>) -> bool {
         if self.is_focused {
             if let Some(input) = self.input_ref.cast::<HtmlInputElement>() {
                 let _ = input.focus();

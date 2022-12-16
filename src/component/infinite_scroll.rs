@@ -17,10 +17,12 @@ pub struct InfiniteScrollProps {
 
 #[function_component(InfiniteScroll)]
 pub fn _component_fn(props: &InfiniteScrollProps) -> Html {
+    let node_ref = use_node_ref();
+
     let node = if let Some(v) = props.r#ref.clone() {
         v
     } else {
-        use_node_ref()
+        node_ref
     };
 
     let event = props.event.clone();

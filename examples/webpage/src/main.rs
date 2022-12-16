@@ -10,7 +10,9 @@ pub fn main() -> Result<(), JsValue> {
 
     body().set_class_name("text-light d-flex flex-column");
 
-    yew::start_app::<app::App>();
+    yew::Renderer::<app::App>::new().render();
+
+    log::debug!("Rendering App");
 
     Ok(())
 }

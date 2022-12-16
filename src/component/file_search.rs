@@ -220,7 +220,7 @@ impl Component for FileSearchComponent {
         true
     }
 
-    fn changed(&mut self, ctx: &Context<Self>) -> bool {
+    fn changed(&mut self, ctx: &Context<Self>, _prev: &FileSearchProps) -> bool {
         if self.cached_init_location != ctx.props().init_location {
             self.set_location = None;
             self.cached_init_location = ctx.props().init_location.clone();

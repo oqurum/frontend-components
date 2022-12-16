@@ -28,7 +28,7 @@ pub enum AppRoute {
 }
 
 #[allow(clippy::let_unit_value)]
-pub fn switch(routes: &AppRoute) -> Html {
+pub fn switch(routes: AppRoute) -> Html {
     match routes {
         AppRoute::Home => html! { <Home /> },
         AppRoute::MultiSelect => html! { <MultiSelectPage /> },
