@@ -1,5 +1,5 @@
 .sidebar-container {
-	width: 14em;
+	width: 10em;
 
 	li.nav-item {
 		display: flex;
@@ -23,5 +23,17 @@
 				font-size: var(--font-size-3);
 			}
 		}
+	}
+}
+
+@media (min-width: 768px) {
+	.sidebar-container {
+		width: 12em;
+	}
+}
+
+@media (min-width: 992px) {
+	.sidebar-container {
+		width: 14em;
 	}
 }
