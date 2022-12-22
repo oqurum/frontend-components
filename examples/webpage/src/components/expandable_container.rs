@@ -23,10 +23,10 @@ pub fn _expandable_cont() -> Html {
                 { "What will be the outcome of the final battle between Voldemort and Harry?" }
             </ExpandableContainerComponent>
 
-            <h3>{ "Specified Line Count" }</h3>
+            <h3>{ "Specific Contracted Line Count" }</h3>
             <br />
 
-            <ExpandableContainerComponent max_lines={ 3 }>
+            <ExpandableContainerComponent max_contracted_lines={ 3 }>
                 { "The brilliant‚ breathtaking conclusion to J.K. Rowling’s spellbinding series. " }
                 { "What will be the outcome of the final battle between Voldemort and Harry?" }
             </ExpandableContainerComponent>

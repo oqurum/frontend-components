@@ -8,7 +8,15 @@ use yew_hooks::use_bool_toggle;
 pub struct ExpandableContainerProps {
     pub children: Children,
 
-    pub max_lines: Option<usize>,
+    /// Maximum lines to display when contracted.
+    pub max_contracted_lines: Option<usize>,
+
+    /// Maximum lines to display when expanded
+    pub max_expanded_lines: Option<usize>,
+
+    /// Should scroll be enabled if lines go past max_expanded_lines
+    #[prop_or_default]
+    pub overflow_scroll: bool,
 }
 
 #[function_component(ExpandableContainerComponent)]
@@ -42,13 +50,21 @@ pub fn _expanding_text_comp(props: &ExpandableContainerProps) -> Html {
 
     let mut cont_style = String::new();
 
-    if let Some(max_lines) = props.max_lines {
+    if *is_expanded {
+        if let Some(max_lines) = props.max_expanded_lines {
+            let _ = write!(cont_style, "-webkit-line-clamp: {max_lines};");
+
+            if props.overflow_scroll {
+                let _ = write!(cont_style, "overflow-y: auto;");
+            }
+        }
+    } else if let Some(max_lines) = props.max_contracted_lines {
         let _ = write!(cont_style, "-webkit-line-clamp: {max_lines};");
     }
 
     html! {
         <div class="expandable-container">
-            <div class={ classes!("expanding-container", is_expanded.then(|| "expanded")) } ref={ container_ref } style={ cont_style }>
+            <div class="expanding-container" ref={ container_ref } style={ cont_style }>
                 { for props.children.iter() }
             </div>
             {
