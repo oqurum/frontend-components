@@ -5,6 +5,7 @@ pub mod filter;
 pub mod infinite_scroll;
 pub mod multi_select;
 pub mod popup;
+pub mod select;
 pub mod upload;
 
 pub use carousel::CarouselComponent;

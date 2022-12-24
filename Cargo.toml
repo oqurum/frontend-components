@@ -43,6 +43,7 @@ yew-hooks = { version = "0.2", optional = true }
 [dependencies.web-sys]
 version = "0.3"
 features = [
+	"HtmlSelectElement",
 	"DataTransfer",
 	"DomTokenList",
 	"RequestInit",

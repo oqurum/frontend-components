@@ -8,6 +8,9 @@ pub enum AppRoute {
     #[at("/")]
     Home,
 
+    #[at("/select")]
+    Select,
+
     #[at("/multiselect")]
     MultiSelect,
 
@@ -31,6 +34,7 @@ pub enum AppRoute {
 pub fn switch(routes: AppRoute) -> Html {
     match routes {
         AppRoute::Home => html! { <Home /> },
+        AppRoute::Select => html! { <SelectPage /> },
         AppRoute::MultiSelect => html! { <MultiSelectPage /> },
         AppRoute::ExpandableContainer => html! { <ExpandableContainerPage /> },
         AppRoute::Carousel => html! { <CarouselPage /> },
@@ -44,6 +48,7 @@ pub fn switch(routes: AppRoute) -> Html {
 pub fn home() -> Html {
     html! {
         <ul>
+            <li><Link<AppRoute> to={ AppRoute::Select }>{ "Select" }</Link<AppRoute>></li>
             <li><Link<AppRoute> to={ AppRoute::MultiSelect }>{ "MultiSelect" }</Link<AppRoute>></li>
             <li><Link<AppRoute> to={ AppRoute::ExpandableContainer }>{ "Expandable Container" }</Link<AppRoute>></li>
             <li><Link<AppRoute> to={ AppRoute::Carousel }>{ "Carousel" }</Link<AppRoute>></li>
