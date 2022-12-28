@@ -4,14 +4,14 @@ use super::{Popup, PopupType};
 
 // TODO: Update on Resize
 
-// TODO: Implement.
-// #[derive(Clone, Copy)]
-// pub enum ButtonPopupPosition {
-//     Top,
-//     Bottom,
-//     Left,
-//     Right,
-// }
+#[derive(Clone, Copy, PartialEq, Default)]
+pub enum ButtonPopupPosition {
+    Top,
+    #[default]
+    Bottom,
+    Left,
+    Right,
+}
 
 #[derive(PartialEq, Eq)]
 pub enum ButtonTitle {
@@ -34,6 +34,9 @@ pub struct ButtonProperty {
     pub title: ButtonTitle,
 
     pub on_close_popup: Option<Callback<()>>,
+
+    #[prop_or_default]
+    pub position: ButtonPopupPosition,
 
     pub children: Children,
 }
@@ -80,6 +83,13 @@ impl Component for ButtonWithPopup {
     }
 
     fn view(&self, ctx: &Context<Self>) -> Html {
+        let popup_type = match ctx.props().position {
+            ButtonPopupPosition::Top => "popup-top",
+            ButtonPopupPosition::Bottom => "popup-bottom",
+            ButtonPopupPosition::Left => "popup-left",
+            ButtonPopupPosition::Right => "popup-right",
+        };
+
         html! {
             <div class={ classes!("button-popup-group", ctx.props().class.clone()) }>
                 {
@@ -114,7 +124,7 @@ impl Component for ButtonWithPopup {
                             <Popup
                                 type_of={ PopupType::Display }
                                 on_close={ ctx.link().callback(|_| ButtonMsg::ClosePopup) }
-                                classes="dropdown-menu dropdown-menu-dark show"
+                                classes={ classes!("dropdown-menu", "dropdown-menu-dark", "show", popup_type) }
                             >
                                 {
                                     for ctx.props().children

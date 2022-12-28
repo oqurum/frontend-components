@@ -28,6 +28,9 @@ pub enum AppRoute {
 
     #[at("/popups")]
     Popups,
+
+    #[at("/dropdown")]
+    Dropdown,
 }
 
 #[allow(clippy::let_unit_value)]
@@ -41,6 +44,7 @@ pub fn switch(routes: AppRoute) -> Html {
         AppRoute::FileSearch => html! { <FileSearchPage /> },
         AppRoute::Filter => html! { <FilterPage /> },
         AppRoute::Popups => html! { <PopupsPage /> },
+        AppRoute::Dropdown => html! { <ButtonDropdownPage /> },
     }
 }
 
@@ -55,6 +59,7 @@ pub fn home() -> Html {
             <li><Link<AppRoute> to={ AppRoute::FileSearch }>{ "File Search" }</Link<AppRoute>></li>
             <li><Link<AppRoute> to={ AppRoute::Filter }>{ "Filter" }</Link<AppRoute>></li>
             <li><Link<AppRoute> to={ AppRoute::Popups }>{ "Popups" }</Link<AppRoute>></li>
+            <li><Link<AppRoute> to={ AppRoute::Dropdown }>{ "Dropdown" }</Link<AppRoute>></li>
         </ul>
     }
 }
