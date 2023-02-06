@@ -4,24 +4,20 @@
 .poster {
 	position: relative;
 	overflow: hidden;
-	width: 165px;
-	min-width: 165px;
-	height: 247px;
+	aspect-ratio: var(--ratio-portrait);
 	border-radius: var(--bs-border-radius);
 	border: var(--border-size-1) solid transparent;
 	transition: border 0.25s;
 
-	margin: 0 0 2px 0;
-	padding: 0;
-
 	&.small {
-		width: 82px;
-		min-width: 82px;
 		height: 123px;
 	}
 
+	&.normal {
+		height: 247px;
+	}
+
 	&.large {
-		width: 248px;
 		height: 372px;
 	}
 
