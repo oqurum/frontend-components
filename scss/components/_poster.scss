@@ -64,6 +64,10 @@
 		object-fit: cover;
 	}
 
+	> .overlay {
+		display: none;
+	}
+
 	.top-left,
 	.top-right,
 	.bottom-left,
@@ -74,6 +78,7 @@
 		cursor: pointer;
 	}
 
+	&:hover .overlay,
 	&:hover .bottom-left,
 	&:hover .bottom-right,
 	&:hover .top-left,
