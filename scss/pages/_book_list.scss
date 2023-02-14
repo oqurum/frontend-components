@@ -23,24 +23,22 @@
     width: 165px;
 
     /* PLACEHOLDER */
-    &.placeholder {
+    &.is-placeholder {
         .poster {
-            background-color: #202020;
             min-height: 247px;
         }
 
         .info {
             .author {
-                background-color: #202020;
                 height: 1em;
                 width: 7em;
                 margin-bottom: 3px;
             }
 
             .title {
-                background-color: #202020;
                 height: 1em;
                 width: 4em;
+                color: unset;
             }
         }
     }
