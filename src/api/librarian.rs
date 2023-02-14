@@ -68,6 +68,9 @@ mod search {
         #[serde(default)]
         pub view_private: bool,
 
+        #[serde(default)]
+        pub with_isbn: bool,
+
         pub server_id: String,
     }
 
@@ -113,8 +116,7 @@ mod search {
 
         pub thumb_url: Option<String>,
 
-        pub isbn_10: Option<String>,
-        pub isbn_13: Option<String>,
+        pub isbns: Option<Vec<String>>,
 
         pub is_public: bool,
 
@@ -138,8 +140,7 @@ mod search {
 
         pub thumb_url: Option<String>,
 
-        pub isbn_10: Option<String>,
-        pub isbn_13: Option<String>,
+        pub isbns: Option<Vec<String>>,
 
         pub display_author_id: Option<usize>,
         pub publisher: Option<String>,
