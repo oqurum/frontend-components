@@ -20,7 +20,9 @@
     flex-direction: column;
     margin: 1em;
     padding: 0;
+    // TODO: Make responsive
     width: 165px;
+    min-width: 165px;
 
     /* PLACEHOLDER */
     &.is-placeholder {
