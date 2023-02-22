@@ -147,6 +147,9 @@ pub struct SelectItemProps<Ident: Clone + PartialEq + 'static> {
 
     #[prop_or_default]
     pub selected: bool,
+
+    #[prop_or_default]
+    pub disabled: bool,
 }
 
 pub struct SelectItem<Ident: PartialEq> {
@@ -165,7 +168,7 @@ impl<Ident: Clone + PartialEq + 'static> Component for SelectItem<Ident> {
 
     fn view(&self, ctx: &Context<Self>) -> Html {
         html! {
-            <option selected={ ctx.props().selected }>
+            <option selected={ ctx.props().selected } disabled={ ctx.props().disabled }>
                 { &ctx.props().name }
             </option>
         }
