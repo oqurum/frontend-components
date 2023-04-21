@@ -198,6 +198,7 @@ create_single_id!(BookId);
 create_single_id!(ImageId);
 
 create_single_id!(MemberId);
+create_single_id!(ClientId);
 
 create_single_id!(PersonId);
 
