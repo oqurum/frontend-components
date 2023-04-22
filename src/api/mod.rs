@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use serde_repr::{Serialize_repr, Deserialize_repr};
 
 pub mod librarian;
 pub mod reader;
@@ -33,6 +34,10 @@ impl<V> WrappingResponse<V> {
         Self::Error(ApiErrorResponse::new(value))
     }
 
+    pub fn error_code<S: Into<String>>(value: S, code: ErrorCodeResponse) -> Self {
+        Self::Error(ApiErrorResponse::new_with_code(value, code))
+    }
+
     pub fn ok(self) -> std::result::Result<V, ApiErrorResponse> {
         match self {
             Self::Resp(v) => Ok(v),
@@ -57,12 +62,21 @@ impl<V> WrappingResponse<V> {
 
 #[derive(Debug, Serialize, Deserialize, Clone, thiserror::Error)]
 pub struct ApiErrorResponse {
+    pub code: ErrorCodeResponse,
     pub description: String,
 }
 
 impl ApiErrorResponse {
     pub fn new<S: Into<String>>(value: S) -> Self {
         Self {
+            code: ErrorCodeResponse::Unset,
+            description: value.into(),
+        }
+    }
+
+    pub fn new_with_code<S: Into<String>>(value: S, code: ErrorCodeResponse) -> Self {
+        Self {
+            code,
             description: value.into(),
         }
     }
@@ -72,4 +86,15 @@ impl std::fmt::Display for ApiErrorResponse {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "Api Error Occured: {}", self.description)
     }
+}
+
+
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize_repr, Deserialize_repr)]
+#[repr(u8)]
+pub enum ErrorCodeResponse {
+    Unset = 0,
+    /// Only set for client errors.
+    Client,
+    NotLoggedIn,
 }
