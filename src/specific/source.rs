@@ -71,16 +71,27 @@ impl TryFrom<&str> for Source {
     }
 }
 
-impl TryFrom<String> for Source {
-    type Error = Error;
+// impl TryFrom<String> for Source {
+//     type Error = Error;
 
-    fn try_from(value: String) -> Result<Self, Self::Error> {
-        let (source, value) = value.split_once(':').ok_or(Error::SourceSplit)?;
+//     fn try_from(value: String) -> Result<Self, Self::Error> {
+//         let (source, value) = value.split_once(':').ok_or(Error::SourceSplit)?;
 
-        Ok(Self {
+//         Ok(Self {
+//             agent: Agent(Cow::Owned(source.to_owned())),
+//             value: value.to_owned(),
+//         })
+//     }
+// }
+// TODO: Have to use for sqlx.
+impl From<String> for Source {
+    fn from(value: String) -> Self {
+        let (source, value) = value.split_once(':').ok_or(Error::SourceSplit).unwrap();
+
+        Self {
             agent: Agent(Cow::Owned(source.to_owned())),
             value: value.to_owned(),
-        })
+        }
     }
 }
 
@@ -101,5 +112,39 @@ impl Serialize for Source {
         S: Serializer,
     {
         serializer.serialize_str(&self.to_string())
+    }
+}
+
+
+#[cfg(feature = "backend")]
+use sqlx::{Decode, Encode, encode::IsNull, error::BoxDynError, database::{Database, HasValueRef, HasArguments}};
+
+#[cfg(feature = "backend")]
+impl<'q, DB: Database> Encode<'q, DB> for Source
+where
+    String: Encode<'q, DB>,
+{
+    fn encode_by_ref(&self, buf: &mut <DB as HasArguments<'q>>::ArgumentBuffer) -> IsNull {
+        <&String as Encode<DB>>::encode(&self.to_string(), buf)
+    }
+}
+
+#[cfg(feature = "backend")]
+impl<'r, DB: Database> Decode<'r, DB> for Source
+where
+    String: Decode<'r, DB>,
+{
+    fn decode(value: <DB as HasValueRef<'r>>::ValueRef) -> Result<Self, BoxDynError> {
+        Ok(Self::try_from(<String as Decode<DB>>::decode(value)?).unwrap())
+    }
+}
+
+#[cfg(feature = "backend")]
+impl<DB: Database> sqlx::Type<DB> for Source
+where
+    String: sqlx::Type<DB>
+{
+    fn type_info() -> DB::TypeInfo {
+        <String as sqlx::Type<DB>>::type_info()
     }
 }

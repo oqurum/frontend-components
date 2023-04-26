@@ -1,5 +1,8 @@
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
+#[cfg(feature = "backend")]
+use sqlx::{Decode, Encode, encode::IsNull, error::BoxDynError, database::{Database, HasValueRef, HasArguments}};
+
 pub static MISSING_THUMB_PATH: &str = "/images/missingthumbnail.jpg";
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -22,6 +25,44 @@ impl ImageType {
         })
     }
 }
+
+impl From<i64> for ImageType {
+    fn from(value: i64) -> Self {
+        Self::from_number(value as u8).unwrap()
+    }
+}
+
+
+#[cfg(feature = "backend")]
+impl<'q, DB: Database> Encode<'q, DB> for ImageType
+where
+    u8: Encode<'q, DB>,
+{
+    fn encode_by_ref(&self, buf: &mut <DB as HasArguments<'q>>::ArgumentBuffer) -> IsNull {
+        <&u8 as Encode<DB>>::encode(&self.as_num(), buf)
+    }
+}
+
+#[cfg(feature = "backend")]
+impl<'r, DB: Database> Decode<'r, DB> for ImageType
+where
+    u8: Decode<'r, DB>,
+{
+    fn decode(value: <DB as HasValueRef<'r>>::ValueRef) -> Result<Self, BoxDynError> {
+        Ok(Self::from_number(<u8 as Decode<DB>>::decode(value)?).unwrap())
+    }
+}
+
+#[cfg(feature = "backend")]
+impl<DB: Database> sqlx::Type<DB> for ImageType
+where
+    u8: sqlx::Type<DB>
+{
+    fn type_info() -> DB::TypeInfo {
+        <u8 as sqlx::Type<DB>>::type_info()
+    }
+}
+
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ThumbnailStore {
@@ -92,5 +133,35 @@ impl Serialize for ThumbnailStore {
         S: Serializer,
     {
         self.as_value().serialize(serializer)
+    }
+}
+
+#[cfg(feature = "backend")]
+impl<'q, DB: Database> Encode<'q, DB> for ThumbnailStore
+where
+    Option<String>: Encode<'q, DB>,
+{
+    fn encode_by_ref(&self, buf: &mut <DB as HasArguments<'q>>::ArgumentBuffer) -> IsNull {
+        <&Option<String> as Encode<DB>>::encode(&self.as_value().map(|v| v.to_string()), buf)
+    }
+}
+
+#[cfg(feature = "backend")]
+impl<'r, DB: Database> Decode<'r, DB> for ThumbnailStore
+where
+    Option<String>: Decode<'r, DB>,
+{
+    fn decode(value: <DB as HasValueRef<'r>>::ValueRef) -> Result<Self, BoxDynError> {
+        Ok(Self::from(<Option<String> as Decode<DB>>::decode(value)?))
+    }
+}
+
+#[cfg(feature = "backend")]
+impl<DB: Database> sqlx::Type<DB> for ThumbnailStore
+where
+    Option<String>: sqlx::Type<DB>
+{
+    fn type_info() -> DB::TypeInfo {
+        <Option<String> as sqlx::Type<DB>>::type_info()
     }
 }

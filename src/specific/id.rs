@@ -5,13 +5,10 @@ use std::{
     str::FromStr,
 };
 
-#[cfg(feature = "backend")]
-use rusqlite::{
-    types::{FromSql, FromSqlResult, ToSql, ToSqlOutput, Value, ValueRef},
-    Result,
-};
-
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
+
+#[cfg(feature = "backend")]
+use sqlx::{Decode, Encode, encode::IsNull, error::BoxDynError, database::{Database, HasValueRef, HasArguments}};
 
 use crate::ImageType;
 
@@ -21,9 +18,10 @@ mod macros {
     #[macro_export]
     macro_rules! create_single_id {
         ($name:ident) => {
+            #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, sqlx::Type)]
+            #[sqlx(transparent)]
             #[repr(transparent)]
-            #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-            pub struct $name(usize);
+            pub struct $name(i64);
 
             impl $name {
                 pub fn none() -> Self {
@@ -35,26 +33,12 @@ mod macros {
                 }
             }
 
-            impl FromSql for $name {
-                #[inline]
-                fn column_result(value: ValueRef<'_>) -> FromSqlResult<Self> {
-                    Ok(Self(usize::column_result(value)?))
-                }
-            }
-
-            impl ToSql for $name {
-                #[inline]
-                fn to_sql(&self) -> Result<ToSqlOutput<'_>> {
-                    usize::to_sql(&self.0)
-                }
-            }
-
             impl<'de> Deserialize<'de> for $name {
                 fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
                 where
                     D: Deserializer<'de>,
                 {
-                    Ok(Self(usize::deserialize(deserializer)?))
+                    Ok(Self(i64::deserialize(deserializer)?))
                 }
             }
 
@@ -63,12 +47,12 @@ mod macros {
                 where
                     S: Serializer,
                 {
-                    usize::serialize(&self.0, serializer)
+                    i64::serialize(&self.0, serializer)
                 }
             }
 
             impl Deref for $name {
-                type Target = usize;
+                type Target = i64;
 
                 fn deref(&self) -> &Self::Target {
                     &self.0
@@ -77,7 +61,7 @@ mod macros {
 
             impl Display for $name {
                 fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-                    usize::fmt(&self.0, f)
+                    i64::fmt(&self.0, f)
                 }
             }
 
@@ -87,14 +71,14 @@ mod macros {
                 }
             }
 
-            impl PartialEq<usize> for $name {
-                fn eq(&self, other: &usize) -> bool {
+            impl PartialEq<i64> for $name {
+                fn eq(&self, other: &i64) -> bool {
                     self.0 == *other
                 }
             }
 
-            impl From<usize> for $name {
-                fn from(value: usize) -> Self {
+            impl From<i64> for $name {
+                fn from(value: i64) -> Self {
                     Self(value)
                 }
             }
@@ -103,7 +87,7 @@ mod macros {
                 type Err = ParseIntError;
 
                 fn from_str(s: &str) -> Result<Self, Self::Err> {
-                    usize::from_str(s).map(Self)
+                    i64::from_str(s).map(Self)
                 }
             }
         };
@@ -118,7 +102,7 @@ mod macros {
         ($name:ident) => {
             #[repr(transparent)]
             #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-            pub struct $name(usize);
+            pub struct $name(i64);
 
             impl $name {
                 pub fn none() -> Self {
@@ -135,7 +119,7 @@ mod macros {
                 where
                     D: Deserializer<'de>,
                 {
-                    Ok(Self(usize::deserialize(deserializer)?))
+                    Ok(Self(i64::deserialize(deserializer)?))
                 }
             }
 
@@ -144,12 +128,12 @@ mod macros {
                 where
                     S: Serializer,
                 {
-                    usize::serialize(&self.0, serializer)
+                    i64::serialize(&self.0, serializer)
                 }
             }
 
             impl Deref for $name {
-                type Target = usize;
+                type Target = i64;
 
                 fn deref(&self) -> &Self::Target {
                     &self.0
@@ -158,7 +142,7 @@ mod macros {
 
             impl Display for $name {
                 fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-                    usize::fmt(&self.0, f)
+                    i64::fmt(&self.0, f)
                 }
             }
 
@@ -168,14 +152,14 @@ mod macros {
                 }
             }
 
-            impl PartialEq<usize> for $name {
-                fn eq(&self, other: &usize) -> bool {
+            impl PartialEq<i64> for $name {
+                fn eq(&self, other: &i64) -> bool {
                     self.0 == *other
                 }
             }
 
-            impl From<usize> for $name {
-                fn from(value: usize) -> Self {
+            impl From<i64> for $name {
+                fn from(value: i64) -> Self {
                     Self(value)
                 }
             }
@@ -184,7 +168,7 @@ mod macros {
                 type Err = ParseIntError;
 
                 fn from_str(s: &str) -> Result<Self, Self::Err> {
-                    usize::from_str(s).map(Self)
+                    i64::from_str(s).map(Self)
                 }
             }
         };
@@ -204,11 +188,9 @@ create_single_id!(PersonId);
 
 create_single_id!(TagId);
 
-// TODO: Macro
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct ImageIdType {
-    pub id: usize,
+    pub id: i64,
     pub type_of: ImageType, // We don't use the full u8. We use up 4 bits.
 }
 
@@ -253,18 +235,22 @@ impl Serialize for ImageIdType {
 }
 
 #[cfg(feature = "backend")]
-impl FromSql for ImageIdType {
-    #[inline]
-    fn column_result(value: ValueRef<'_>) -> FromSqlResult<Self> {
-        Ok(Self::from_str(&String::column_result(value)?).unwrap())
+impl<'r, DB: Database> Decode<'r, DB> for ImageIdType
+where
+    &'r str: Decode<'r, DB>,
+{
+    fn decode(value: <DB as HasValueRef<'r>>::ValueRef) -> Result<Self, BoxDynError> {
+        Ok(Self::from_str(<&str as Decode<DB>>::decode(value)?).unwrap())
     }
 }
 
 #[cfg(feature = "backend")]
-impl ToSql for ImageIdType {
-    #[inline]
-    fn to_sql(&self) -> Result<ToSqlOutput<'_>> {
-        Ok(ToSqlOutput::Owned(Value::Text(self.as_string())))
+impl<'q, DB: Database> Encode<'q, DB> for ImageIdType
+where
+    String: Encode<'q, DB>,
+{
+    fn encode_by_ref(&self, buf: &mut <DB as HasArguments<'q>>::ArgumentBuffer) -> IsNull {
+        <&String as Encode<DB>>::encode(&self.as_string(), buf)
     }
 }
 

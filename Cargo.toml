@@ -14,7 +14,7 @@ publish = false
 [features]
 default = []
 frontend = ["gloo-file", "gloo-timers", "gloo-utils", "wasm-bindgen", "wasm-bindgen-futures", "web-sys", "yew", "yew-hooks", "chrono/wasmbind"]
-backend = ["rusqlite"]
+backend = ["sqlx"]
 
 
 [dependencies]
@@ -29,7 +29,7 @@ validator = { version = "0.16", features = ["derive"] }
 chrono = "0.4"
 
 # Backend
-rusqlite = { version = "0.28", optional = true }
+sqlx = { version = "0.7.0-alpha.2", optional = true }
 
 
 # Frontend
