@@ -1,10 +1,14 @@
+body {
+	--sidebar-width: 10em;
+}
+
 .sidebar-container {
-	width: 10em;
+	width: var(--sidebar-width);
 
 	li.nav-item {
 		display: flex;
 
-		> .options {
+		>.options {
 			display: block;
 
 			padding: var(--bs-nav-link-padding-y) var(--bs-nav-link-padding-x);
@@ -16,7 +20,7 @@
 			}
 		}
 
-		> .nav-link {
+		>.nav-link {
 			flex-grow: 1;
 
 			&.library {
@@ -27,13 +31,13 @@
 }
 
 @media (min-width: 768px) {
-	.sidebar-container {
-		width: 12em;
+	body {
+		--sidebar-width: 12em;
 	}
 }
 
 @media (min-width: 992px) {
-	.sidebar-container {
-		width: 14em;
+	body {
+		--sidebar-width: 14em;
 	}
 }
