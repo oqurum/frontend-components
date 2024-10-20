@@ -111,7 +111,7 @@ impl Component for FileSearchComponent {
                                 on_close={ ctx.link().callback(|_| Msg::TogglePopup) }
                             >
                                 <div class="modal-header">
-                                    <div class="location">{ self.current_location.display() }</div>
+                                    <div class="location">{ self.current_location.display().to_string() }</div>
                                 </div>
                                 <div class="modal-header">
                                     <div class="files">

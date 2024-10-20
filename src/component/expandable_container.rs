@@ -9,9 +9,11 @@ pub struct ExpandableContainerProps {
     pub children: Children,
 
     /// Maximum lines to display when contracted.
+    #[prop_or_default]
     pub max_contracted_lines: Option<usize>,
 
     /// Maximum lines to display when expanded
+    #[prop_or_default]
     pub max_expanded_lines: Option<usize>,
 
     /// Should scroll be enabled if lines go past max_expanded_lines
@@ -30,22 +32,19 @@ pub fn _expanding_text_comp(props: &ExpandableContainerProps) -> Html {
         let container_ref = container_ref.clone();
         let show_expand_button = show_expand_button.clone();
 
-        use_effect_with_deps(
-            move |container_ref| {
-                let container = container_ref
-                    .cast::<HtmlElement>()
-                    .expect_throw("container_ref not attached to element");
+        use_effect_with(container_ref, move |container_ref| {
+            let container = container_ref
+                .cast::<HtmlElement>()
+                .expect_throw("container_ref not attached to element");
 
-                if container.client_height() < container.scroll_height() {
-                    show_expand_button.set(true);
-                } else {
-                    show_expand_button.set(false);
-                }
+            if container.client_height() < container.scroll_height() {
+                show_expand_button.set(true);
+            } else {
+                show_expand_button.set(false);
+            }
 
-                move || {}
-            },
-            container_ref,
-        );
+            move || {}
+        });
     }
 
     let mut cont_style = String::new();

@@ -1,7 +1,5 @@
 [workspace]
-members = [
-	"examples/*"
-]
+members = ["examples/*"]
 
 [package]
 name = "common"
@@ -13,7 +11,17 @@ publish = false
 
 [features]
 default = []
-frontend = ["gloo-file", "gloo-timers", "gloo-utils", "wasm-bindgen", "wasm-bindgen-futures", "web-sys", "yew", "yew-hooks", "chrono/wasmbind"]
+frontend = [
+	"gloo-file",
+	"gloo-timers",
+	"gloo-utils",
+	"wasm-bindgen",
+	"wasm-bindgen-futures",
+	"web-sys",
+	"yew",
+	"yew-hooks",
+	"chrono/wasmbind",
+]
 backend = ["sqlx"]
 
 
@@ -25,28 +33,23 @@ serde = { version = "1.0", features = ["derive"] }
 serde_repr = "0.1"
 serde_json = "1.0"
 serde_urlencoded = "0.7"
-validator = { version = "0.16", features = ["derive"] }
+validator = { version = "0.18", features = ["derive"] }
 chrono = "0.4"
 
 # Backend
-sqlx = { version = "0.7.0-alpha.2", optional = true }
+sqlx = { version = "0.7", optional = true }
 
 
 # Frontend
-gloo-file = { version = "0.2", features = ["futures"], optional = true }
-gloo-timers = { version = "0.2", features = ["futures"], optional = true }
-gloo-utils = { version = "0.1", optional = true }
+gloo-file = { version = "0.3", features = ["futures"], optional = true }
+gloo-timers = { version = "0.3", features = ["futures"], optional = true }
+gloo-utils = { version = "0.2", optional = true }
 wasm-bindgen = { version = "0.2", optional = true }
 wasm-bindgen-futures = { version = "0.4", optional = true }
-yew = { version = "0.20", optional = true }
-yew-hooks = { version = "0.2", optional = true }
+yew = { version = "0.21", optional = true }
+yew-hooks = { version = "0.3", optional = true }
 
 [dependencies.web-sys]
 version = "0.3"
-features = [
-	"HtmlSelectElement",
-	"DataTransfer",
-	"DomTokenList",
-	"RequestInit",
-]
+features = ["HtmlSelectElement", "DataTransfer", "DomTokenList", "RequestInit"]
 optional = true

@@ -155,8 +155,10 @@ pub struct PopupCloseProps {
     // TODO: Make transparent. Remove class, title
     #[prop_or_default]
     pub class: Classes,
+    #[prop_or_default]
     pub title: Option<String>,
 
+    #[prop_or_default]
     pub onclick: Option<Callback<MouseEvent>>,
 }
 

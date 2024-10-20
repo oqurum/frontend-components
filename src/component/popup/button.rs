@@ -33,6 +33,7 @@ pub struct ButtonProperty {
     #[prop_or_default]
     pub title: ButtonTitle,
 
+    #[prop_or_default]
     pub on_close_popup: Option<Callback<()>>,
 
     #[prop_or_default]

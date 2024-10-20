@@ -157,7 +157,7 @@ impl<Ident: Clone + PartialEq + 'static> Component for MultiSelectModule<Ident> 
 
             MultiSelectMessage::OnSelectItem(id) => {
                 if let Some(mut item) = ctx.props().children.iter().find(|v| v.props.id == id) {
-                    let mut props = Rc::make_mut(&mut item.props);
+                    let props = Rc::make_mut(&mut item.props);
                     props.selected = true;
 
                     if let Some(cb) = ctx.props().on_event.as_ref() {
@@ -176,7 +176,7 @@ impl<Ident: Clone + PartialEq + 'static> Component for MultiSelectModule<Ident> 
                 }
 
                 if let Some(mut item) = ctx.props().children.iter().find(|v| v.props.id == id) {
-                    let mut props = Rc::make_mut(&mut item.props);
+                    let props = Rc::make_mut(&mut item.props);
                     props.selected = false;
 
                     if let Some(cb) = ctx.props().on_event.as_ref() {
@@ -292,7 +292,7 @@ impl<Ident: Clone + PartialEq + 'static> MultiSelectModule<Ident> {
                             .filter(|v| self.filter_viewable_child(v))
                             .enumerate()
                             .map(|(index, mut item)| {
-                                let mut props = Rc::make_mut(&mut item.props);
+                                let props = Rc::make_mut(&mut item.props);
 
                                 props.hovering = index == self.selected_index;
 
@@ -414,6 +414,7 @@ pub struct MultiSelectItemProps<Ident: Clone + PartialEq + 'static> {
     pub id: Ident,
     pub name: String,
 
+    #[prop_or_default]
     pub callback: Option<Scope<MultiSelectModule<Ident>>>,
 
     #[prop_or_default]

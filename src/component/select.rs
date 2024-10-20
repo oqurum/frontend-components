@@ -7,11 +7,15 @@ use yew::prelude::*;
 pub struct SelectProperty<Ident: Clone + PartialEq + 'static> {
     pub children: ChildrenWithProps<SelectItem<Ident>>,
 
+    #[prop_or_default]
     pub default: Option<Ident>,
 
+    #[prop_or_default]
     pub name: Option<AttrValue>,
+    #[prop_or_default]
     pub class: Option<String>,
 
+    #[prop_or_default]
     pub onselect: Option<Callback<Ident>>,
 
     #[prop_or_default]
