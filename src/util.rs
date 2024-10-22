@@ -1,4 +1,4 @@
-use chrono::{Date, DateTime, NaiveDate, TimeZone, Utc};
+use chrono::{DateTime, NaiveDate, TimeZone, Utc};
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 /// Truncate string based off of char indices instead of bytes.
@@ -91,7 +91,7 @@ pub fn deserialize_datetime<'de, D>(value: D) -> std::result::Result<DateTime<Ut
 where
     D: Deserializer<'de>,
 {
-    Ok(Utc.timestamp_millis(i64::deserialize(value)?))
+    Ok(Utc.timestamp_millis_opt(i64::deserialize(value)?).unwrap())
 }
 
 pub fn deserialize_datetime_opt<'de, D>(
@@ -101,7 +101,7 @@ where
     D: Deserializer<'de>,
 {
     if let Some(v) = Option::<i64>::deserialize(value)? {
-        Ok(Some(Utc.timestamp_millis(v)))
+        Ok(Some(Utc.timestamp_millis_opt(v).unwrap()))
     } else {
         Ok(None)
     }
@@ -114,7 +114,7 @@ where
     D: Deserializer<'de>,
 {
     if let Some(v) = Option::<Option<i64>>::deserialize(value)? {
-        Ok(Some(v.map(|v| Utc.timestamp_millis(v))))
+        Ok(Some(v.map(|v| Utc.timestamp_millis_opt(v).unwrap())))
     } else {
         Ok(None)
     }
@@ -122,11 +122,11 @@ where
 
 // Date
 
-pub fn serialize_date<S>(value: &Date<Utc>, s: S) -> std::result::Result<S::Ok, S::Error>
+pub fn serialize_date<S>(value: &NaiveDate, s: S) -> std::result::Result<S::Ok, S::Error>
 where
     S: Serializer,
 {
-    s.serialize_i64(value.and_hms(0, 0, 0).timestamp())
+    s.serialize_i64(value.and_hms_opt(0, 0, 0).unwrap().and_utc().timestamp())
 }
 
 pub fn serialize_naivedate_opt<S>(
@@ -137,16 +137,19 @@ where
     S: Serializer,
 {
     match value {
-        Some(v) => s.serialize_i64(v.and_hms(0, 0, 0).timestamp()),
+        Some(v) => s.serialize_i64(v.and_hms_opt(0, 0, 0).unwrap().and_utc().timestamp()),
         None => s.serialize_none(),
     }
 }
 
-pub fn deserialize_date<'de, D>(value: D) -> std::result::Result<Date<Utc>, D::Error>
+pub fn deserialize_date<'de, D>(value: D) -> std::result::Result<NaiveDate, D::Error>
 where
     D: Deserializer<'de>,
 {
-    Ok(Utc.timestamp(i64::deserialize(value)?, 0).date())
+    Ok(Utc
+        .timestamp_opt(i64::deserialize(value)?, 0)
+        .unwrap()
+        .date_naive())
 }
 
 pub fn deserialize_naivedate_opt<'de, D>(
@@ -156,7 +159,7 @@ where
     D: Deserializer<'de>,
 {
     if let Some(v) = Option::<i64>::deserialize(value)? {
-        Ok(Some(Utc.timestamp(v, 0).date_naive()))
+        Ok(Some(Utc.timestamp_opt(v, 0).unwrap().date_naive()))
     } else {
         Ok(None)
     }
